@@ -47,6 +47,8 @@ skills/<skill-name>/
 
 The main `SKILL.md` will stay concise and route to supporting resources through relative links.
 
+The repository will not contain `agents/openai.yaml` or other vendor-specific skill metadata. The portable `SKILL.md` and its standard frontmatter will remain the source of truth for both Claude Code and Codex/GPT.
+
 ## Planned workflow family
 
 The likely first skills are:
@@ -77,6 +79,7 @@ Every skill will be checked against the Agent Skills naming and frontmatter requ
 
 - A missing or malformed skill stops publication until validation passes.
 - Tool-specific instructions belong in conditional references instead of making the core workflow depend on one agent.
+- Vendor-specific metadata files, including `agents/openai.yaml`, are excluded.
 - Commands that change external systems require the authorization appropriate to that action; installing a workflow skill does not grant deployment, merge, or messaging authority.
 - The GitHub remote and skills.sh listing are intentionally deferred until the repository owner chooses to publish.
 
