@@ -1,0 +1,46 @@
+{
+  "observedUTC": "2026-09-06T14:20:51.085117+00:00",
+  "events": [
+    {
+      "phase": "preflight",
+      "status": "complete",
+      "at": "2026-09-06T14:07:23Z",
+      "host_load_average": {
+        "one_minute": 4.76,
+        "five_minutes": 4.85,
+        "fifteen_minutes": 4.5
+      },
+      "pins": {
+        "head": "b6519f59d678507f0742b08a8aeb51772c07413c",
+        "candidate_patch_sha256": "7defa1f8b03e07b57534356329dbe7a14d6d84234ce5ba183347bbc9f059c125",
+        "spec_sha256": "55945e3481d15b6d6ab6808157a9b7c37ff21e42c22a4d5798cf53024ca92d05",
+        "retained_dump_sha256": "b8135638ab76315e83f8ed14d258b032ecdd01af5b16926c54c89e6e85ecee8a"
+      },
+      "product_tree_sha256": "b3626e3e9e2606bba0bea32984e70d9e33fdf05bdea454b9cb9210500840f337",
+      "harness_input_sha256": "7dfc2b49116d0f66ff3ab047e2e7e6c44f270ce19aa45980e54b884122de1a44",
+      "catalog_redis_image": "redis:8.4.6-alpine"
+    },
+    {
+      "phase": "resources_created",
+      "status": "complete",
+      "at": "2026-09-06T14:07:23Z"
+    },
+    {
+      "phase": "phase_failure",
+      "status": "failed",
+      "reason": "postgres_restore_failed",
+      "exit_status": 3,
+      "line": 448,
+      "at": "2026-09-06T14:19:44Z"
+    },
+    {
+      "phase": "cleanup",
+      "status": "complete",
+      "retained_dump_unchanged": true,
+      "source_clean": true,
+      "at": "2026-09-06T14:19:56Z"
+    }
+  ],
+  "failureLogSha256": "bcaa6eb3f44381c3645e45b435dd8d18250698f85d4f69db1144828597210c1f",
+  "diagnosis": "pg_restore completed before subsequent psql baseline insert failed prediction_catalog_writer_protocol; script insert omits writer_protocol, schema requires 2. Failure event labels entire phase postgres_restore_failed. No product fix or duplicate test performed."
+}

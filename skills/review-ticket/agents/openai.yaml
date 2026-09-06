@@ -1,6 +1,6 @@
 interface:
   display_name: "Review Ticket"
   short_description: "Review ticket quality, behavior, and readiness"
-  default_prompt: "Use $review-ticket with one reviewer covering both axes by default, add a second only for its recorded risk conditions, save the independent evidence, and update this implemented ticket's readiness or revision handoff."
+  default_prompt: "Use $review-ticket with one reviewer covering both axes by default, add a second only for its recorded risk conditions, invoke $systematic-debugging in diagnosis-only mode for unexplained failures, save the independent evidence, and update this implemented ticket's readiness or revision handoff."
 policy:
   allow_implicit_invocation: false

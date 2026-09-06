@@ -1,0 +1,292 @@
+{
+  "observed_at": "2026-09-06T13:29:55.994831+00:00",
+  "workflow": "/srv/dev/rollify-workspace/.coding-workflow/zappx/workflows/polymarket-experience",
+  "worktree": "/srv/dev/rollify-workspace/.worktrees/prediction-catalog-read-path-v3",
+  "coordinator_task": "01a0762f-9e85-79c2-a270-4fa9d1eb47f0",
+  "tickets": [
+    {
+      "id": "T-001",
+      "title": "Resume complete catalog ingestion without losing identities",
+      "status": "ready",
+      "blocked_by": [],
+      "assignee": "polymarket-20260905-01:T-001:4",
+      "available": true,
+      "implementation_ref": "workspace:/srv/dev/rollify-workspace/.worktrees/prediction-catalog-read-path-v3@9c33d97a2895e4372cdf1a4cb6b481ca8d1ae89a; manifest:../scratch/polymarket-20260905-01/T-001-revision-4/source-manifest.json; sha256:b3f124851b366ba2a4de588b29f8e8e73c1340de07c400284cd4004c089afc28",
+      "review_ref": "../reviews/T-001/R-003.md",
+      "integration_ref": "../integrations/T-001-I-001/handoff.json",
+      "superseded_by": [],
+      "sha256": "a63a01ab82f275bebd46f3119813dc1b56d2a39b0dcef0cac0227719c5742bae"
+    },
+    {
+      "id": "T-002",
+      "title": "Browse stable catalog pages from bounded shared records",
+      "status": "in_review",
+      "blocked_by": [
+        "T-001"
+      ],
+      "assignee": "polymarket-20260905-01:T-002:1",
+      "available": false,
+      "implementation_ref": "workspace:/srv/dev/rollify-workspace/.worktrees/prediction-catalog-read-path-v3@b6519f59d678507f0742b08a8aeb51772c07413c; manifest:../scratch/polymarket-20260905-01/T-002/source-manifest.json; sha256:22f1ef20a93565e65bbb61da448f3a087d3c3023d5609c8bfd9f14c14606cedd",
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "e3958ebfeedb41dbf71795bdf5e0f796c517fe2c35702b9317c159eca9a23726"
+    },
+    {
+      "id": "T-003",
+      "title": "Search and filter the entire catalog with restorable queries",
+      "status": "pending",
+      "blocked_by": [
+        "T-002",
+        "T-004"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "15012e30717ba199155d3b9eb601b1c3f572ebefdf9ad0736358c51ad111ee19"
+    },
+    {
+      "id": "T-004",
+      "title": "Render the ranked homepage with rich cards and safe bootstrap",
+      "status": "pending",
+      "blocked_by": [
+        "T-002"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "65d447f2a57a982bd8e0569f3d4ef265e6a7e1994de3eb495c64c75e75a699a0"
+    },
+    {
+      "id": "T-005",
+      "title": "Show featured history and attributed public context",
+      "status": "pending",
+      "blocked_by": [
+        "T-004"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "a28a2cd293e168777c45a5b958ab46c1ab29e9d5256fc140278c7ea2137d934c"
+    },
+    {
+      "id": "T-006",
+      "title": "Save a local watchlist with bounded market lookup",
+      "status": "pending",
+      "blocked_by": [
+        "T-004"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "181725b3445263825a46f7fdec359e5ef3fca36eea5ca37700f8ceb07afd017a"
+    },
+    {
+      "id": "T-007",
+      "title": "Collect shared market state under fenced fleet ownership",
+      "status": "ready",
+      "blocked_by": [],
+      "assignee": "polymarket-20260905-01:T-007:3",
+      "available": true,
+      "implementation_ref": "../scratch/polymarket-20260905-01/T-007-revision-3/implementation-handoff.md",
+      "review_ref": "../reviews/T-007/R-002.md",
+      "integration_ref": "../integrations/T-007-I-001/handoff.json",
+      "superseded_by": [],
+      "sha256": "6796daf80bd060f08e1268e913f07009468a4727c6df384b5d64ff62454e6e68"
+    },
+    {
+      "id": "T-008",
+      "title": "Deliver v5 prices and coverage through one browser socket",
+      "status": "pending",
+      "blocked_by": [
+        "T-002",
+        "T-007"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "efa1791f760e2ff9550826114dfbb71acf78e1e72a879256cb96a49c7c4ba2ae"
+    },
+    {
+      "id": "T-009",
+      "title": "Display genuine recent buys with bounded largest-value selection",
+      "status": "pending",
+      "blocked_by": [
+        "T-008"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "6c0d0fc3aa10bc6153ec2a3dde22c172856615dd1e356375b4bd3b249a49b94c"
+    },
+    {
+      "id": "T-010",
+      "title": "Show correctly joined sports context on sports cards",
+      "status": "pending",
+      "blocked_by": [
+        "T-004",
+        "T-008"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "7798eee8abf198ddb96f9d73a813bbbb550bd6293ad0035ecf82f370b1e7c07d"
+    },
+    {
+      "id": "T-011",
+      "title": "Follow short-duration crypto intervals without identity crossover",
+      "status": "pending",
+      "blocked_by": [
+        "T-004",
+        "T-008"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "04a74fc3a09d2d05810c386b5ec25f616f97f65ff43bddf43288a5998e0052af"
+    },
+    {
+      "id": "T-012",
+      "title": "Implement and run the active-reader capacity workload",
+      "status": "pending",
+      "blocked_by": [
+        "T-003",
+        "T-005",
+        "T-006",
+        "T-009",
+        "T-010",
+        "T-011"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "213f5077bb1822a52a7edc38f7dcd696c3bc80580c71a0f79b2066acadaf2808"
+    },
+    {
+      "id": "T-013",
+      "title": "Add fleet-fault recovery and provider-footprint verification tools",
+      "status": "pending",
+      "blocked_by": [
+        "T-012"
+      ],
+      "assignee": null,
+      "available": false,
+      "implementation_ref": null,
+      "review_ref": null,
+      "superseded_by": [],
+      "sha256": "8dbd6657b78a313799e6b0af387cfdc5cb62d232b35ddae8e190dbceb08e1a1a"
+    },
+    {
+      "id": "T-014",
+      "title": "Restore the baseline backend static-analysis gate",
+      "status": "ready",
+      "blocked_by": [],
+      "assignee": "polymarket-20260905-01:T-014:1",
+      "available": true,
+      "implementation_ref": "commit 3f5d188af2e3344f68b2015ce5bada38378746d5 on task/polymarket-20260905-01-T-014",
+      "review_ref": "../reviews/T-014/R-001.md",
+      "integration_ref": "../integrations/T-014-I-001/handoff.json",
+      "superseded_by": [],
+      "sha256": "10cb1916196d0d1845c47463f589cf1458e18c16a7807b2e504d5b2f4072ecda"
+    }
+  ],
+  "artifacts": {
+    "RUN.md": {
+      "exists": true,
+      "sha256": "b73e59c011a7fa2a5e455ce0c51747968a0eefb335e57121a539e33861a886e0",
+      "bytes": 87703,
+      "mtime_utc": "2026-09-06T13:19:26.263156+00:00"
+    },
+    "tickets/index.md": {
+      "exists": false
+    },
+    "reviews/T-002/R-001-quality/REPORT.md": {
+      "exists": true,
+      "sha256": "ce632340299222883afebeb3ebec85b92e55bfbe8f8f1e79daa668aa8caadb30",
+      "bytes": 22877,
+      "mtime_utc": "2026-09-06T13:15:04.107506+00:00"
+    },
+    "reviews/T-002/R-001-quality/handoff.json": {
+      "exists": true,
+      "sha256": "8da2a553040338de72103cbdffd6dab9b8b7ce1b6bd29fba6cafd09160302274",
+      "bytes": 23049,
+      "mtime_utc": "2026-09-06T13:17:14.411334+00:00"
+    },
+    "reviews/T-002/R-001-behavior/runtime.json": {
+      "exists": true,
+      "sha256": "5e7dcb1d4227005e04c420df6d99f8fc08da94337e041ff2f9ea036ac54a9cc6",
+      "bytes": 1839,
+      "mtime_utc": "2026-09-06T12:51:08.466504+00:00"
+    },
+    "reviews/T-002/R-001-behavior/handoff.json": {
+      "exists": false
+    },
+    "skill-pins/PIN-20260906T1316Z/MANIFEST.md": {
+      "exists": true,
+      "sha256": "4c1d2a46168eab84255ecdcd5aa6c5f36ca64a03d3ad4814b272676460ee4421",
+      "bytes": 1679,
+      "mtime_utc": "2026-09-06T13:19:26.260157+00:00"
+    },
+    "scratch/polymarket-20260905-01/T-002/source-manifest.json": {
+      "exists": true,
+      "sha256": "22f1ef20a93565e65bbb61da448f3a087d3c3023d5609c8bfd9f14c14606cedd",
+      "bytes": 13093,
+      "mtime_utc": "2026-09-06T12:32:41.946990+00:00"
+    },
+    "scratch/polymarket-20260905-01/SKILL-FEEDBACK.md": {
+      "exists": true,
+      "sha256": "517b01a3747fdf940fc8228fd9da7dd9434ba36a8ce8d33e4ab78077909af30f",
+      "bytes": 3782,
+      "mtime_utc": "2026-09-06T01:38:00.524460+00:00"
+    },
+    "scratch/polymarket-20260905-01/dashboard/server-current.json": {
+      "exists": true,
+      "sha256": "3cfd77914301216f97499c935fe9317fdf59853b63f7ab3d16e693ee5fb7dad7",
+      "bytes": 1525,
+      "mtime_utc": "2026-09-06T13:09:20.407938+00:00"
+    }
+  },
+  "runtime_observations": [
+    {
+      "role": "dashboard",
+      "pid": 3215970,
+      "expected_start_ticks": "267775922",
+      "present": false
+    },
+    {
+      "role": "snapshot_worker",
+      "pid": 3215985,
+      "expected_start_ticks": "267775933",
+      "present": false
+    },
+    {
+      "role": "behavior_reviewer",
+      "pid": 3131386,
+      "expected_start_ticks": "267670634",
+      "present": true,
+      "state": "S",
+      "actual_start_ticks": "267670634",
+      "identity_matches": true
+    }
+  ],
+  "dashboard_probe": {
+    "error": "<urlopen error [Errno 111] Connection refused>"
+  }
+}

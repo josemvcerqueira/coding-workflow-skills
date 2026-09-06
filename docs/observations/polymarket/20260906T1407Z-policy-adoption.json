@@ -1,0 +1,18 @@
+{
+  "observedUTC": "2026-09-06T14:08:06.173530+00:00",
+  "policyTimestampUTC": "2026-09-06T14:06Z",
+  "sourcePaths": {
+    "/srv/dev/rollify-workspace/.coding-workflow/zappx/workflows/polymarket-experience/RUN.md": {
+      "sha256": "9d6472a807d1dd5ea14a1fdcbb86d6825795e69650183d2ecb848fe86e8f8be1"
+    },
+    "/srv/dev/rollify-workspace/.coding-workflow/zappx/workflows/polymarket-experience/reviews/T-002/R-001-behavior/COORDINATOR-INBOX.md": {
+      "sha256": "92a3441a4efff451dbabd74dd6e6d622a6fea5980266ff5cdcad5e9468f88187"
+    }
+  },
+  "runPolicyEntries": [
+    "- T-002 execution-policy update `2026-09-06T14:06Z`: independent review remains mandatory, but harness expansion and additional design work are frozen. Existing behavior review will checkpoint findings, valid checks/evidence, candidate identity, logs, resource state, and outstanding acceptance criteria without another setup retry. Bounded setup attempt 6 handle `bw9rd6acn` ran 27.368 seconds and diagnosed the same `set -e` capture failure; it allocated no Docker resources and executed no acceptance check, so live verification is explicitly blocked rather than passed. A separate narrow harness-repair assignment will target only that proven startup defect. The three required quality findings Q001-Q003 proceed as one isolated implementation batch; optional Q004-Q008 are excluded. After correction, independent affected re-review carries justified evidence, keeps remaining checks explicit, and final combined source still receives the required full gate."
+  ],
+  "inboxPolicy": "Coordinator policy update 2026-09-06T14:06Z, superseding any further retry request above: freeze harness expansion and additional design documentation now. Bounded attempt 6 exact handle `bw9rd6acn` ran from `14:05:32.941Z` to `14:06:00.309Z` (27.368 seconds), exited 1, allocated no Docker resources, and executed no acceptance check. Its trace SHA-256 `b0ac725ee854cad90c5b29c72885da79de77f1a4d8bb7b399da4a4d63c3dae52` proves the same `set -e` command-substitution exit immediately after the expected missing-certificate diagnostic was captured. Do not retry setup in this review. Finish the current bounded 60-second trace observer naturally, then checkpoint this existing review in `handoff.json` and `REPORT.md`: preserve all findings, completed checks and provenance, logs, candidate/source identities, cleanup/resource state, and every outstanding acceptance criterion. Mark live verification blocked at setup, not passed. Optional polish is excluded. This is a checkpoint/handoff of the same review, not a restart. A separate narrow harness-repair assignment will own only the diagnosed startup defect.\n",
+  "behaviorHandoffPresent": false,
+  "behaviorReportPresent": false
+}

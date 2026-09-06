@@ -39,7 +39,7 @@ For UI features, drive the real user journey through the frontend and backend. F
 
 Mocks and stubs can support diagnosis, but cannot prove a real boundary they replace. Document permitted external sandbox substitutes and their limits. Code inspection can support structural properties, but cannot replace required runtime behavior. A successful build, health endpoint, or collection of ticket reports is not an end-to-end pass.
 
-When a check fails, preserve its output and investigate whether it is a product defect, harness error, or environment blocker. Correct your own harness mistakes without changing the expected contract, then rerun and retain the history. Do not retry an unchanged failure until it happens to pass. Run independent checks when safe; never conceal failed or unrun criteria.
+When a check fails and direct evidence does not establish the cause, use the [systematic debugging companion](../systematic-debugging/SKILL.md) in diagnosis-only mode. Preserve the output, reproduce or record the blocker, test one hypothesis at a time, and classify product, harness, environment, pre-existing, specification, or inconclusive outcomes. This mode does not permit product source or permanent-test edits. Correct only your own disposable harness mistakes without changing the expected contract, then rerun and retain the history. Return confirmed product defects and affected criteria to the coordinator. Do not retry an unchanged failure until it happens to pass or conceal failed or unrun criteria.
 
 ## Report and hand off
 

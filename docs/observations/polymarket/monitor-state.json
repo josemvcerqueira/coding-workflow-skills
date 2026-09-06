@@ -1,0 +1,30 @@
+{
+  "taskId": "01a0762f-9e85-79c2-a270-4fa9d1eb47f0",
+  "hostId": "remote-ssh-discovered:ovh-vps",
+  "lastCheckedUTC": "2026-09-06T14:29:07.932088+00:00",
+  "log": "/home/ubuntu/coding-workflow-skills/docs/observations/polymarket-workflow.md",
+  "baseline": "/home/ubuntu/coding-workflow-skills/docs/observations/polymarket/20260906T132955Z-baseline.json",
+  "lastMeaningfulObservation": "Reviewer original PID absent; runtime stopped14:26:09 with result_is_error true/error_during_execution despite launcher exit0. Cleanup recorded14:25:32, no named containers, no handoff/report. Smoke task awaits explicit transfer.",
+  "next": "Observe owner recovery of missing handoff and explicit isolated tooling ownership; no duplicate review restart. Monitor source-skill changes separately after user supplies prompt.",
+  "afterCursor": "0404d715-1572-4d10-ab1f-e48e722c3321:4",
+  "previousTurnClassification": "progress: verified terminal reviewer state and cleanup, establishing a recovery boundary and remaining ownership dependency",
+  "designSha256": "7a4806a9ce535568cfae9401a3b1db173793a6aaa94ca50590f229f1c95c69b5",
+  "behaviorTranscriptBytes": 3474143,
+  "behaviorTranscriptMtime": 1788702051.9823556,
+  "targets": [
+    {
+      "taskId": "01a0762f-9e85-79c2-a270-4fa9d1eb47f0",
+      "hostId": "remote-ssh-discovered:ovh-vps",
+      "title": "Resume Polymarket experience work",
+      "afterCursor": "0404d715-1572-4d10-ab1f-e48e722c3321:4",
+      "responsibility": "T-002 review/correction/integration and remaining tickets"
+    },
+    {
+      "taskId": "01a07712-1ae0-7561-a54d-cc5c9daa4530",
+      "hostId": "remote-ssh-discovered:ovh-vps",
+      "title": "Build Polymarket smoke kit",
+      "afterCursor": "90ccb7d2-45eb-4626-9fcb-78d9c1ca42b4:29",
+      "responsibility": "Wrapper-owned reusable smoke tooling; product checkout and active reviewer resources read-only"
+    }
+  ]
+}

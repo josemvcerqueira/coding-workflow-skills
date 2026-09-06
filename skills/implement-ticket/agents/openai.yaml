@@ -1,6 +1,6 @@
 interface:
   display_name: "Implement Ticket"
   short_description: "Implement one ticket with TDD and build checks"
-  default_prompt: "Use $implement-ticket and its companion $tdd to implement the assigned ticket, run permitted tests and build checks, and record the handoff without review or application startup."
+  default_prompt: "Use $implement-ticket and its companions $tdd and, for unexplained failures, $systematic-debugging to implement the assigned ticket, run permitted tests and build checks, and record the handoff without review or application startup."
 policy:
   allow_implicit_invocation: false

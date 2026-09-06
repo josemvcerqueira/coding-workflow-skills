@@ -17,13 +17,15 @@ When the coordinator supplies canonical paths, verify the supplied project, work
 
 Follow the [snapshot rules](references/snapshot.md). Resolve the repository, checkout, baseline, target, included paths, dirty-content identity when applicable, and spec digest. Do not review a changing target or revive a superseded ticket. Use `implemented` as the normal entry state; resume saved `in_review`. Before reopening `ready` or recording `revision_required`, check [availability invalidation](references/review-record.md#reopening-and-invalidation). When `available` is true or `integration_ref` is present, the coordinator clears both, preserving the former manifest as history; a standalone parent waits for that update. Already false/null fields need no coordinator wait unless ownership conflicts.
 
-For re-review, start from changed paths, prior finding IDs and dispositions, affected contracts, reusable evidence candidates, and cited report sections. Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) when choosing checks and carrying evidence across stages or rounds. Every reviewer independently validates reused evidence against source identity, environment, command, and covered contract.
+For re-review, start from changed paths, prior finding IDs and dispositions, affected contracts, reusable evidence candidates, and cited report sections. Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) when choosing checks, enforcing its setup-recovery boundary, and carrying evidence across stages or rounds. Every reviewer independently validates reused evidence against source identity, environment, command, and covered contract.
 
 Coordinate ownership with the assignment owner, preserve the implementation assignee, and set `in_review` before dispatch. Resolve ambiguous source, spec, or competing ownership before mutation; ask one focused question only if evidence cannot resolve a material decision.
 
 ## Choose coverage and dispatch
 
 Read [reviewer briefs](references/reviewer-briefs.md). One reviewer with fresh focused context covers both axes by default and reports separate outcomes and evidence. The coordinator decides reviewer count; the implementer does not choose. Use two independent reviewers for concrete security, authentication, authorization, privacy, secret-handling, concurrency, distributed-state, durability, recovery, database or schema migration, destructive data, financial, trading, billing, money-movement, public-contract, compatibility, large cross-subsystem, disputed-finding, or explicit-policy risk. Add a second reviewer after the first only when its evidence creates material uncertainty. If a required second reviewer is unavailable, retain `in_review`; do not certify readiness.
+
+Locate the local [systematic debugging companion](../systematic-debugging/SKILL.md) and include its path in the reviewer assignment. When a permitted check fails or behavior is unexpected and direct evidence does not establish the cause, the reviewer invokes it in diagnosis-only mode. A demonstrated static finding can be reported directly. Debugging does not expand review authority.
 
 Give reviewers file pointers and the current delta, not conversations or copied reports. Include their brief, ticket and spec pointers, exact target, standards, permitted environment, output contract, dashboard state, and reserved resources. Reviewer children return structured axis reports and evidence to the parent. Only the parent writes the numbered report, ticket state, index, and review manifest. With two reviewers, preserve independent first inspection.
 
@@ -36,6 +38,8 @@ Confirm implementers and mutating processes stopped. Read-only inspection can sh
 Read every report and inspect its cited source, findings, checks, limitations, and cleanup. Both axes need explicit outcomes. A final message, majority vote, or one passing axis cannot replace evidence. Ask a reviewer to investigate unsupported claims or disagreements.
 
 Apply the [review record and decision rules](references/review-record.md). A blocking finding identifies a violated contract or demonstrated maintenance cost, location, evidence, consequence, and bounded correction. Complexity scores and smell thresholds are advisory; preference alone does not block. Confirmed behavior and safety defects do block.
+
+For an unexplained failure, inspect the linked diagnosis before deciding. Require a reproduction or recorded blocker, tested hypothesis, classification, affected contract, and routed next action. Keep the diagnosis distinct from both axis outcomes. A diagnosis does not authorize the reviewer to implement its recommended correction.
 
 Inspect any reviewer-repair delta and checks before accepting it. Outside the bounded reviewer repair, do not fix code during aggregation. Semantic changes, public contracts, behavior, expectations, assertions, uncertain moves, and adjacent cleanup return to the implementer.
 

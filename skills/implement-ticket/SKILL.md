@@ -35,7 +35,9 @@ Use the shared [check-scope contract](../setup-workflow/references/check-scope.m
 
 Check new or changed test names, fixture labels, and identifiers against applicable repository naming rules. Use configured naming checks when present. Correct confirmed violations within the assignment before final checks; do not turn this into repository-wide cleanup.
 
-Diagnose failures introduced by the ticket. Preserve pre-existing, blocked, and unrun results. For a broad race failure observed under concurrency, retain commands, timing, environment, logs, and competing suites; investigate under the original concurrent conditions. A later serial pass does not erase that observation. Required failed or unavailable implementation checks prevent an implemented claim.
+When a failure introduced by the ticket, accepted review finding, or unsuccessful correction has no established cause, use the [systematic debugging companion](../systematic-debugging/SKILL.md) in implementation mode before another product edit. Preserve the symptom and target, test one hypothesis at a time, and record each materially different root-cause correction attempt. After three unsuccessful corrections for the same symptom, stop editing and return the evidence to the coordinator for architectural reconsideration, ticket replanning, or contract clarification.
+
+Preserve pre-existing, blocked, and unrun results. For a broad race failure observed under concurrency, retain commands, timing, environment, logs, and competing suites; investigate under the original concurrent conditions. A later serial pass does not erase that observation. Required failed or unavailable implementation checks prevent an implemented claim.
 
 Use targeted searches and bounded sections. Put verbose output in the assigned evidence location and return the path plus relevant result; do not paste raw command output into progress, coordinator messages, or handoffs. Update progress only when milestone, next action, blocker, or evidence changes.
 

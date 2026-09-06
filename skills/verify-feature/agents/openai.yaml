@@ -1,6 +1,6 @@
 interface:
   display_name: "Verify Feature"
   short_description: "Test the combined feature against its full spec"
-  default_prompt: "Use $verify-feature to test this spec's complete feature in the combined checkout, run safe end-to-end checks, and save evidence without changing product code or deploying."
+  default_prompt: "Use $verify-feature to test this spec's complete feature in the combined checkout, invoke $systematic-debugging in diagnosis-only mode for unexplained failures, and save evidence without changing product code or deploying."
 policy:
   allow_implicit_invocation: false

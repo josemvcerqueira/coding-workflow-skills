@@ -1,0 +1,6 @@
+interface:
+  display_name: "Systematic Debugging"
+  short_description: "Diagnose unexplained failures before correction"
+  default_prompt: "Use $systematic-debugging to investigate this unexplained failure within the calling stage's existing authority and return evidence, classification, and the next owner."
+policy:
+  allow_implicit_invocation: true

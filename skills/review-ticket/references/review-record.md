@@ -8,6 +8,7 @@ Each report contains:
 - Baseline, target identity, included paths, spec digest, and relevant standards sources.
 - Separate Quality and standards and Spec and behavior sections. Each has its outcome, findings, executed checks, evidence links, and limits.
 - A criterion-to-evidence map for the ticket, with pass, fail, or blocked results. State why a check is not applicable when necessary.
+- Linked diagnoses for unexplained failures: stable diagnosis ID, symptom and reproduction, tested hypotheses, root cause or remaining uncertainty, classification, affected contract, recommended next owner, and cleanup state. Keep diagnosis separate from both axis outcomes.
 - Coordinator dispositions for each finding: accepted-required, repaired-by-reviewer, optional, rejected-with-evidence, or unresolved. Preserve the reviewer's original concern when disagreeing.
 - Reviewer repairs, when used: finding ID, eligibility evidence, granted lease, before/after source identities, changed paths, exact correction, smallest meaningful post-edit checks, explicit skips, and cleanup state. Use disposition `repaired-by-reviewer` only after the parent verifies this evidence.
 - Final decision, lifecycle transition, availability evidence, remaining blockers, and handoff action.
@@ -26,7 +27,9 @@ An optional improvement does not prevent readiness. A concern can be rejected on
 
 Use [bounded reviewer repair](reviewer-repair.md) for an explicit and unambiguous mechanical correction that does not change production behavior and does not delete or weaken a test. Severity alone is not the gate. After the smallest meaningful checks pass, the parent may accept `repaired-by-reviewer` and finish the same review round. A qualifying repair needs no second reviewer solely because of the repair. Failed eligibility, an unexpected delta, or insufficient verification returns the finding to the implementer.
 
-If a reviewer fails, times out, or returns an incomplete report, retry that role through the available agent mechanism. Save progress if it cannot finish. Do not count an absent review as a pass.
+If the reviewer runtime itself fails or returns an incomplete report, preserve its partial record and follow the parent's dispatch-recovery rules. A setup or check failure follows [bounded setup recovery](../../setup-workflow/references/check-scope.md#execute-checks-and-recover-setup), not a fresh reviewer or whole-review restart. Do not count an absent review as a pass.
+
+A diagnosis explains a failed check but does not set ticket state by itself. Route a confirmed product defect through a required behavior finding. Route test or harness defects, environment blockers, pre-existing failures, specification gaps, and inconclusive results to the owner named by the systematic debugging contract. Preserve the original failure and diagnosis when a harness correction or changed condition permits a rerun.
 
 ## Reopening and invalidation
 

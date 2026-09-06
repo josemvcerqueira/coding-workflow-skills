@@ -1,6 +1,6 @@
 interface:
   display_name: "Coordinate Work"
   short_description: "Run, pause, and resume ticket implementation and review"
-  default_prompt: "Use $coordinate-work to run, pause, continue, or inspect this local ticket set. Starting a run grants standing local execution authority: coordinate implementation and independent review, make local commits, and integrate reviewed work into the selected local consumer without asking again. Continue or resume preserves the recorded authority and narrower limits; it does not expand them. Do not push, open pull requests, deploy, mutate shared infrastructure, or overwrite user work unless explicitly authorized."
+  default_prompt: "Use $coordinate-work to run, pause, continue, or inspect this local ticket set. Starting a run grants standing local execution authority: coordinate implementation and independent review, invoke $systematic-debugging for unexplained failures without expanding the calling stage's authority, make local commits, and integrate reviewed work into the selected local consumer without asking again. Continue or resume preserves the recorded authority and narrower limits; it does not expand them. Do not push, open pull requests, deploy, mutate shared infrastructure, or overwrite user work unless explicitly authorized."
 policy:
   allow_implicit_invocation: false

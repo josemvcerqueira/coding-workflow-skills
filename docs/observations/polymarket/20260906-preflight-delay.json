@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-09-06T13:49:17.739451+00:00",
+  "finding_ids": [
+    "OBS-011",
+    "OBS-012"
+  ],
+  "harness_background_task": "bwpul17oo",
+  "polling_shell_pid": 3350499,
+  "polling_shell_present": true,
+  "failed_launch_log": "candidate worktree is dirty\n",
+  "wrapper_output": "EXIT=1\n\n[exited with code 0]\n",
+  "polling_loop": {
+    "match": "joined-t002-r001-up.sh",
+    "iterations": 100,
+    "sleep_seconds": 6,
+    "matches_own_shell_command_line": true
+  },
+  "canonical_progress_exists": false,
+  "polling_shell_start_ticks": "267968976"
+}

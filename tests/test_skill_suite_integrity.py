@@ -7,22 +7,32 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
+IMPLICIT_SKILLS = {"systematic-debugging"}
 
 
 class SkillSuiteIntegrityTests(unittest.TestCase):
-    def test_skill_entrypoints_have_explicit_invocation_policy(self):
+    def test_skill_entrypoints_have_declared_invocation_policy(self):
         for skill_path in sorted(SKILLS.glob("*/SKILL.md")):
             with self.subTest(skill=skill_path.parent.name):
                 text = skill_path.read_text(encoding="utf-8")
                 self.assertTrue(text.startswith("---\n"))
                 self.assertIn(f'\nname: {skill_path.parent.name}\n', text)
                 frontmatter = text.split("---", 2)[1]
-                self.assertRegex(frontmatter, r"(?m)^disable-model-invocation:\s*true\s*$")
 
                 policy_path = skill_path.parent / "agents/openai.yaml"
                 self.assertTrue(policy_path.is_file(), policy_path)
                 policy = policy_path.read_text(encoding="utf-8")
-                self.assertRegex(policy, r"(?m)^\s*allow_implicit_invocation:\s*false\s*$")
+                if skill_path.parent.name in IMPLICIT_SKILLS:
+                    self.assertNotRegex(frontmatter, r"(?m)^disable-model-invocation:\s*true\s*$")
+                    self.assertRegex(policy, r"(?m)^\s*allow_implicit_invocation:\s*true\s*$")
+                else:
+                    self.assertRegex(frontmatter, r"(?m)^disable-model-invocation:\s*true\s*$")
+                    self.assertRegex(policy, r"(?m)^\s*allow_implicit_invocation:\s*false\s*$")
+
+        self.assertEqual(
+            IMPLICIT_SKILLS,
+            {path.name for path in SKILLS.iterdir() if path.is_dir() and path.name in IMPLICIT_SKILLS},
+        )
 
     def test_all_skill_document_links_resolve(self):
         for document in sorted(SKILLS.glob("**/*.md")):

@@ -62,17 +62,25 @@ When resuming, compare the run journal, ticket files, runtime state, and workspa
 
 If a worker is running, observe or reconnect. If it is confirmed stopped, inspect its partial edits and saved checks before resuming or reassigning. Require the replacement to preserve that work and verify the current target. If liveness is unknown, reserve its capacity and checkout. Continue only work proven isolated from it.
 
-If a prerequisite becomes invalid or a shared contract changes, stop new affected assignments and ask affected active workers to checkpoint and stop. Confirm they stopped. Preserve ticket evidence and blockers; do not change statuses or erase edges merely to make the validator pass. Reconcile the affected graph before new dispatch.
+If a prerequisite becomes invalid or a shared contract changes, stop new affected assignments and use [live instruction delivery](#live-instruction-delivery) to ask affected active workers to checkpoint and stop. Confirm they stopped. Preserve ticket evidence and blockers; do not change statuses or erase edges merely to make the validator pass. Reconcile the affected graph before new dispatch.
+
+## Live instruction delivery
+
+When changing an active worker's scope, retry permission, or checkpoint/stop boundary, record an instruction revision identifier in `RUN.md`'s existing assignment and event entries. Send that revision through the worker's actual session or control channel and require a worker acknowledgment naming it, echoed in the worker's next existing progress or handoff record. Record the delivery result and worker acknowledgment, or its absence, in the same run entries. An inbox file is not proof of delivery or acknowledgment.
+
+Until acknowledgment, treat the revision as pending and the prior instruction and runtime state as effective. Reconcile the exact runtime/session, current command, owned processes and resources, and any delivery failure before resending. Do not dispatch duplicate work, launch a replacement, or assume the new instruction is effective. If the worker is unreachable, retain its ownership and reservations as uncertain and follow normal recovery; enforce the changed boundary only after acknowledged delivery or confirmed stop and transfer.
 
 ## Healing and scope control
 
 Classify a failure before assigning more work. Keep the finding, target, relevant check evidence, next action, and reason that action can make progress in the existing assignment record.
 
+Use the local [systematic debugging companion](../../systematic-debugging/SKILL.md) when the cause is not established, evidence conflicts, or a correction did not resolve the symptom. Assign diagnosis-only mode to reviewers and verifiers and implementation mode only to the assigned implementer. Preserve the diagnosis ID, tested hypothesis, classification, and recommended owner in `RUN.md` or the linked stage handoff.
+
 - **Mechanical rule violation:** use review-ticket's bounded reviewer repair when eligible. An advisory preference alone does not reopen a ticket.
 - **Behavior defect:** return the accepted finding to the implementer with the failing scenario and affected contract. Prefer the same available worker and checkout when its focused context remains useful; preserve independent review afterward.
 - **Environment or resource failure:** repair only owned, authorized resources, then retry the affected check after the condition changes. A missing service is not evidence for a product rewrite.
 - **Oversized or mis-sliced ticket:** after the owner checkpoints and stops, route remaining work to spec-to-tickets. Preserve completed behavior, evidence, IDs, and graph history through its re-planning contract. Re-slice only when new evidence reveals separable observable outcomes or an excessive review/check surface; elapsed time alone does not justify splitting a coherent slice.
-- **Repeated unchanged finding:** request a focused diagnosis with a new hypothesis and discriminating check before another revision. Continue isolated tickets while a real missing decision or dependency is resolved; avoid redispatching the same prompt against unchanged conditions.
+- **Repeated unchanged finding:** request systematic debugging with a new hypothesis and discriminating check before another revision. After three unsuccessful root-cause corrections for the same symptom, stop product edits and route the evidence to architectural reconsideration, ticket replanning, or contract clarification. Continue isolated tickets while a real missing decision or dependency is resolved; avoid redispatching the same prompt against unchanged conditions.
 
 Use the shared [check scope and evidence reuse](../../setup-workflow/references/check-scope.md) contract for revision, re-review, integration, and final verification. A small correction needs current proof for its impact; it does not reset unrelated passing evidence. The coordinator routes and reconciles these results, keeps ownership and integration safe, and writes lifecycle records; implementing code remains with assigned workers.
 
@@ -86,10 +94,12 @@ Context pressure is advisory: finish the bounded action and checkpoint at its ne
 
 For pause, stop, continue, or resume, read and follow [durable pause and resume](pause-resume.md). It defines the canonical artifacts, role-specific handoffs, clean-pause gate, and resume reconciliation procedure.
 
+Any control that changes an active worker's scope, retry permission, or checkpoint/stop boundary follows [live instruction delivery](#live-instruction-delivery).
+
 - **Status:** inspect and explain progress. Do not start a stopped run or change assignments.
 - **Finish active work, then stop:** set draining. Start no new assignment or lifecycle unit. Existing implementation, review, or verification assignments may reach their normal handoff. Save implemented tickets, review outcomes, required revisions, and verification evidence for resume, then pause. Do not start a follow-on review, revision, or ticket merely to make the pause cleaner.
 - **Pause/stop now:** enter `pausing`, stop new dispatch and lifecycle transitions, save role-specific checkpoints, and request active workers to stop. Preserve partial files. Set `paused` only after the durable checkpoint is complete and every writer and owned mutating process is confirmed stopped.
 - **Continue/resume:** re-establish ownership, read the current pause checkpoint and linked handoffs, reconcile runtime and files, restore running mode, then execute its first resume action. Do not reset tickets to pending or rely on hidden conversation context as a shortcut.
-- **Change scope or limits:** save the instruction. Lowering concurrency stops new dispatch until the run fits the ceiling; do not kill active work unless requested or unsafe. Material spec changes require reconciliation, not silent ticket rewriting.
+- **Change scope or limits:** lower concurrency by stopping new dispatch until the run fits the ceiling; do not kill active work unless requested or unsafe. Material spec changes require reconciliation, not silent ticket rewriting.
 
 Keep pauses and questions proportional. The coordinator holds standing local execution authority for the selected ticket set: do not ask for ordinary local assignments, checks, local commits, or integration into the selected local consumer. Ask one focused question, with a recommendation, only for a material product decision or an external, shared, credentialed, destructive, or otherwise unapproved effect.

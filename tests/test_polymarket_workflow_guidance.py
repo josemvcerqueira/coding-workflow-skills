@@ -111,6 +111,54 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
         self.assertIn("terminal coordinator progress record governs", dashboard)
         self.assertIn("keep summaries, next actions", dashboard)
 
+    def test_live_instruction_changes_require_acknowledged_delivery(self):
+        coordination = read("coordinate-work/SKILL.md")
+        run_state = read("coordinate-work/references/run-state.md")
+
+        self.assertIn("live instruction delivery", coordination)
+        for required in (
+            "actual session or control channel",
+            "instruction revision",
+            "worker acknowledgment",
+            "inbox file is not proof",
+            "do not dispatch duplicate work",
+        ):
+            self.assertIn(required, run_state)
+
+    def test_reviewer_setup_recovery_has_a_handoff_boundary(self):
+        review = read("review-ticket/SKILL.md")
+        record = read("review-ticket/references/review-record.md")
+        checks = read("setup-workflow/references/check-scope.md")
+
+        self.assertIn("setup-recovery boundary", review)
+        self.assertIn("bounded setup recovery", record)
+        for required in (
+            "second failed setup attempt",
+            "explicit coordinator checkpoint",
+            "candidate identity",
+            "outstanding acceptance checks",
+            "verification explicitly `blocked`",
+            "responsible harness owner",
+            "healthy in-flight command",
+        ):
+            self.assertIn(required, checks)
+
+    def test_scheduling_depends_on_concrete_needs_and_separates_adoption(self):
+        coordination = read("coordinate-work/SKILL.md")
+        scheduling = read("coordinate-work/references/scheduling.md")
+
+        self.assertIn("dependency-based scheduling", coordination)
+        for required in (
+            "source, artifact, resource, or acceptance dependency",
+            "active reviewer does not automatically block",
+            "independent tooling development",
+            "adopting that tooling",
+            "acknowledged safe boundary",
+            "single-writer",
+            "expensive test-lane",
+        ):
+            self.assertIn(required, scheduling)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,57 @@
+{
+  "observedUTC": "2026-09-06T14:29:07.932088+00:00",
+  "runtime": {
+    "dispatch_state": "stopped",
+    "pid": 3131386,
+    "proc_start_ticks": "267670634",
+    "session_id": "01af1705-c80b-4ba7-bb9e-e6f4e9c9f748",
+    "stopped_at": "2026-09-06T14:26:09.628248+00:00",
+    "process_exit_code": 0,
+    "result_is_error": true,
+    "result_subtype": "error_during_execution"
+  },
+  "originalPidPresent": false,
+  "reportPresent": false,
+  "handoffPresent": false,
+  "events": [
+    {
+      "phase": "preflight",
+      "status": "complete",
+      "at": "2026-09-06T14:24:56Z",
+      "host_load_average": {
+        "one_minute": 5.46,
+        "five_minutes": 5.24,
+        "fifteen_minutes": 5.11
+      },
+      "pins": {
+        "head": "b6519f59d678507f0742b08a8aeb51772c07413c",
+        "candidate_patch_sha256": "7defa1f8b03e07b57534356329dbe7a14d6d84234ce5ba183347bbc9f059c125",
+        "spec_sha256": "55945e3481d15b6d6ab6808157a9b7c37ff21e42c22a4d5798cf53024ca92d05",
+        "retained_dump_sha256": "b8135638ab76315e83f8ed14d258b032ecdd01af5b16926c54c89e6e85ecee8a"
+      },
+      "product_tree_sha256": "b3626e3e9e2606bba0bea32984e70d9e33fdf05bdea454b9cb9210500840f337",
+      "harness_input_sha256": "8f7af479aa3a6e0ca9219f692ccd2e88f87ceb02114e75cf48ce4060349c2967",
+      "catalog_redis_image": "redis:8.4.6-alpine"
+    },
+    {
+      "phase": "resources_created",
+      "status": "complete",
+      "at": "2026-09-06T14:24:56Z"
+    },
+    {
+      "phase": "phase_failure",
+      "status": "failed",
+      "reason": "postgres_restore_failed",
+      "exit_status": 130,
+      "line": 1,
+      "at": "2026-09-06T14:25:20Z"
+    },
+    {
+      "phase": "cleanup",
+      "status": "complete",
+      "retained_dump_unchanged": true,
+      "source_clean": true,
+      "at": "2026-09-06T14:25:32Z"
+    }
+  ]
+}

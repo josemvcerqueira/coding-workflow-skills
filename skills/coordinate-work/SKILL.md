@@ -21,7 +21,7 @@ Read [run state and recovery](references/run-state.md) before ownership or mutat
 
 Resolve dashboard availability before reading its full contract by checking the recorded run state and resolving `workflow-dashboard` once from `PATH`. When the executable is absent and no dashboard process is recorded, note that once and do not load the dashboard reference. When it is available, running, stale, or being paused, read [dashboard visibility and context policy](references/dashboard.md) for that action.
 
-Locate the companion `implement-ticket`, `tdd`, `review-ticket`, ticket validator, and ticket-format contract before first use. Do not preload worker entrypoints or review references: give workers their resolved skill paths, and read `review-ticket` when review begins. Report a missing required companion; do not silently install or substitute it.
+Locate the companion `implement-ticket`, `tdd`, `review-ticket`, [systematic-debugging](../systematic-debugging/SKILL.md), ticket validator, and ticket-format contract before first use. Do not preload worker entrypoints or review references: give workers their resolved skill paths, and read `review-ticket` when review begins. Systematic debugging is loaded only for an unexplained failure or failed correction. Report a missing required companion; do not silently install or substitute it.
 
 Use the shared [handoff manifest](../setup-workflow/references/handoff-manifest.md). Allocate one exact path per implementation, review, integration, or verification assignment. Follow the manifest's recorded paths and source identity; never guess a handoff filename.
 
@@ -39,9 +39,9 @@ Before first dispatch and after ticket or graph changes, validate the ticket dir
 
 Repeat while running:
 
-1. Reconcile new user instructions, runtime results, handoffs, and physical workspace evidence. Save accepted state changes first.
+1. Reconcile new user instructions, runtime results, handoffs, and physical workspace evidence. Apply [live instruction delivery](references/run-state.md#live-instruction-delivery) to any active worker whose scope, retry permission, or checkpoint/stop boundary changes. Save accepted state changes first.
 2. Route a stable `implemented` ticket to review. Route findings through [healing and scope control](references/run-state.md#healing-and-scope-control), using the smallest sufficient repair and check scope.
-3. Select eligible revisions or pending tickets within dependency, workspace, resource, and runtime limits. Prefer blocker-clearing work without starving independent tickets.
+3. Select eligible revisions or pending tickets through [dependency-based scheduling](references/scheduling.md#dependency-based-scheduling). Prefer blocker-clearing work without starving independent tickets.
 4. Record assignment ID, attempt, checkout, base, reservations, handoff path, progress path, and dispatch intent. Set `assignee` and `in_progress` before implementation dispatch; record the returned runtime ID separately.
 5. Do useful coordination checks while workers run. Otherwise use the longest safe event wait. Keep the coordinator liveness pulse current around these waits when the dashboard is enabled. After an unchanged wait, do not re-read unchanged artifacts, rebuild status, or emit user-facing prose; pulse if due and wait again. A timeout is not failure.
 
@@ -57,7 +57,7 @@ Assignment prompts contain pointers and the current delta, not copied documents.
 
 At review, follow `review-ticket` as its parent. Use one reviewer, independent of implementation, covering both axes by default; use two when its recorded risk rules require it. The coordinator decides. Freeze the target and reserve mutable test resources. A worker's final message is a signal to inspect evidence, not completion proof.
 
-Respect `ready`, `revision_required`, and blocked `in_review` outcomes. Permit reviewer repair only through its explicit bounded contract and lease. Do not repeat an unchanged failed revision; obtain diagnosis or a missing decision.
+Respect `ready`, `revision_required`, and blocked `in_review` outcomes. Permit reviewer repair only through its explicit bounded contract and lease. Do not repeat an unchanged failed revision; route it through systematic debugging with the calling stage's existing authority, then assign the classified next action.
 
 Verify reviewed code in each selected consumer before marking `available`. After authorized integration, write the exact integration handoff and set `integration_ref`; availability alone is not integration evidence. Refresh the derived index after lifecycle changes. Before reopening an integrated ticket, preserve its former integration-manifest path in `RUN.md` or the review record, then clear `available` and set `integration_ref: null` in the same ticket update, before or with leaving `ready`. Publish renewed integration evidence only after review and consumer checks succeed.
 

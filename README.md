@@ -19,6 +19,7 @@ See the [workflow cohesion audit](docs/audits/2026-09-06-workflow-cohesion.md) f
 | [verify-feature](skills/verify-feature/SKILL.md) | Test the combined feature against its full active spec and save runtime evidence. |
 | [coordinate-work](skills/coordinate-work/SKILL.md) | Coordinate worktrees, implementation, review, durable pause/resume, final verification, and safe spec cleanup. |
 | [tdd](skills/tdd/SKILL.md) | Apply behavior-focused test-first development in the implementing agent. |
+| [systematic-debugging](skills/systematic-debugging/SKILL.md) | Diagnose unexplained failures and route evidence without expanding the calling stage's authority. |
 | [backend-architecture](skills/backend-architecture/SKILL.md) | Evaluate backend design, data, caching, latency, and scaling tradeoffs. |
 
 ## Install
@@ -30,13 +31,13 @@ npx skills add . --list
 npx skills add . --skill setup-workflow -a codex -a claude-code
 # Authoring stages and their required companions:
 npx skills add . --skill setup-workflow shape-the-idea write-the-spec backend-architecture spec-to-tickets -a codex -a claude-code
-# Coordinated implementation, review, and final verification:
-npx skills add . --skill setup-workflow coordinate-work implement-ticket tdd review-ticket spec-to-tickets verify-feature -a codex -a claude-code
+# Coordinated implementation, review, debugging, and final verification:
+npx skills add . --skill setup-workflow coordinate-work implement-ticket tdd systematic-debugging review-ticket spec-to-tickets verify-feature -a codex -a claude-code
 # Compatibility entrypoint, if needed:
 npx skills add . --skill setup-project-context setup-workflow -a codex -a claude-code
 ```
 
-The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, and backend-architecture can also be used independently within their scope.
+The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. coordinate-work, implement-ticket, review-ticket, and verify-feature use systematic-debugging conditionally for unexplained failures. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, systematic-debugging, and backend-architecture can also be used independently within their scope.
 
 The optional dashboard is a separate application, not part of any skill installation:
 
@@ -100,7 +101,7 @@ The coordinator resolves the project, active workflow, ticket directory, and agr
 
 Implementation, review, and final verification share one [check-scope policy](skills/setup-workflow/references/check-scope.md). After a correction, rerun failed and affected checks and retain only independently validated unaffected evidence. A mechanical test-name fix does not by itself justify repeating an hour-long suite. A small authorization or concurrency change may justify broad regression checks. Required failures remain unresolved until corrected and verified; a current report distinguishes new observations, carried evidence, and blocked checks.
 
-The coordinator owns scheduling, reservations, recovery, integration, and lifecycle evidence. Workers own code and detailed investigation. A repeated failure changes the next action to diagnosis, a bounded repair, or replanning; it does not restart an unchanged implementation/review loop. Existing timestamps and measured check durations can show where effort went without another tracker. Durable `RUN.md` state supports continuity; creating a separate task-level goal requires an explicit goal request and permitted tool support.
+The coordinator owns scheduling, reservations, recovery, integration, and lifecycle evidence. Workers own code and detailed investigation. An unexplained or repeated failure invokes the local systematic-debugging companion in the calling stage. Reviewers and verifiers use diagnosis-only mode and cannot edit product source; implementers can correct a confirmed product cause within their existing lease and TDD contract. Three unsuccessful root-cause corrections route to architectural reconsideration instead of another speculative loop. Existing timestamps and measured check durations can show where effort went without another tracker. Durable `RUN.md` state supports continuity; creating a separate task-level goal requires an explicit goal request and permitted tool support.
 
 Parallel implementers receive separate coordinator-owned worktrees and isolated mutable test resources. Workers do not switch branches or create replacement worktrees independently. Review waits for writers and their processes to stop. Starting an explicit coordination run grants standing authority for local commits and serialized integration of reviewed work into its selected local consumer; continue and resume preserve the recorded policy without expanding it. Pushes, pull requests, deployments, shared infrastructure changes, history rewrites, and destructive handling of existing work still require separate authority.
 
@@ -134,11 +135,13 @@ See the [workspace contract](skills/setup-workflow/references/workspace.md) and 
 
 ## Invocation and format
 
-All skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Codex policy sets `allow_implicit_invocation: false`; Claude metadata sets `disable-model-invocation: true`. Reading a required companion during an explicit workflow does not enable implicit model invocation.
+All user-facing workflow skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Their Codex policy sets `allow_implicit_invocation: false`, and their Claude metadata sets `disable-model-invocation: true`. `systematic-debugging` is the sole model-invoked exception so an active implementation, review, verification, or coordination stage can load it when an unexplained failure matches its trigger. Invocation never expands that stage's authority.
+
+The focused [systematic-debugging behavior evaluation](evals/systematic-debugging/README.md) defines an ambiguous reviewer failure and a direct static-finding control. These model-based scenarios are separate from the deterministic test suite and make no pass claim until run with fresh agents.
 
 Each skill folder contains `SKILL.md` and `agents/openai.yaml`, with instruction references or bounded deterministic validation helpers where useful. Long-lived applications and browser assets live outside `skills/`. Instructions use short, direct English based on STE principles, without claiming formal ASD-STE100 compliance.
 
-TDD and review guidance build on [Matt Pocock's TDD](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd) and [code-review](https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md) skills. Implementation simplicity also draws on [Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md).
+TDD and review guidance build on [Matt Pocock's TDD](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd) and [code-review](https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md) skills. Implementation simplicity also draws on [Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md). The local systematic-debugging method adapts [Superpowers v6.3.0](https://github.com/obra/superpowers/blob/b36e0829c6d0140e93cfef2ca599b1b07d4a7797/skills/systematic-debugging/SKILL.md) under MIT; the Superpowers plugin is not a runtime dependency.
 
 ## License
 

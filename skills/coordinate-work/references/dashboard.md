@@ -19,7 +19,7 @@ The explicit coordinator estimate is authoritative. Historical ticket data may l
 Use the CLI's progress interface:
 
 ```text
-workflow-dashboard heartbeat <workflow> \
+workflow-dashboard heartbeat /absolute/canonical/workflow \
   --agent-path <canonical-agent-path> --role <role> --stage <stage> \
   --state <state> --summary <short-summary> --next-action <next-action> \
   [--parent <canonical-parent-path>] [--ticket <ticket-id>] \
