@@ -19,17 +19,7 @@ Turn the user's idea into an agreed discovery brief: what to build, for whom, ho
 
 ## Use Simplified Technical English
 
-Use plain English based on ASD-STE100 Simplified Technical English (STE) for questions, recommendations, explanations, progress updates, and the discovery brief:
-
-- Use short, direct sentences. Express one main idea per sentence.
-- Use active voice and concrete verbs. Make clear who does what.
-- Use the same term for the same concept throughout the conversation and brief.
-- Prefer familiar words. Define a necessary technical term when you first use it.
-- State conditions and consequences explicitly. Avoid idioms, vague pronouns, and business jargon.
-- Explain each recommendation through its practical benefit and significant cost.
-- Preserve exact code identifiers, quoted text, and technical meanings. Do not simplify away a condition, limitation, or important distinction.
-
-Apply these principles without claiming formal ASD-STE100 compliance. Formal compliance requires checking the applicable standard's writing rules and controlled dictionary.
+Use short, direct sentences, active voice, familiar words, and consistent terms based on STE principles. State actors, conditions, and consequences explicitly. Explain recommendations through their benefit and significant cost. Define necessary technical terms and preserve exact identifiers and meaning. Do not claim formal ASD-STE100 compliance.
 
 ## Start from the available context
 
@@ -37,7 +27,7 @@ Required reference: read this collection's [external workspace contract](../setu
 
 Read the idea and relevant existing context before asking anything. Reuse answers already supplied. Briefly state your understanding of the intended outcome. If a material question remains, ask the highest-impact one; otherwise write the brief.
 
-Maintain a concise working record of agreed decisions and their reasons, evidence, open questions, dependencies, and deferred topics. Update it after each answer. If an answer changes an earlier decision, revisit only the affected parts and mark the old choice as superseded.
+Maintain a concise working record of agreed decisions and their reasons, evidence, open questions, dependencies, and deferred topics. Update changed decisions after each answer without rewriting the full brief. If an answer changes an earlier decision, revisit only the affected parts and mark the old choice as superseded.
 
 ## Interview one decision at a time
 

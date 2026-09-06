@@ -1,0 +1,25 @@
+{
+  "name": "coding-workflow-dashboard",
+  "version": "0.1.3",
+  "description": "Read-only localhost dashboard for coding-workflow coordination runs",
+  "license": "MIT",
+  "files": [
+    "README.md",
+    "cli.ts",
+    "dashboard.html",
+    "dashboard_server.ts",
+    "workflow_dashboard.py"
+  ],
+  "bin": {
+    "workflow-dashboard": "./cli.ts"
+  },
+  "engines": {
+    "bun": ">=1.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "python3 -m unittest discover -s tests -p 'test_*.py' -v"
+  }
+}

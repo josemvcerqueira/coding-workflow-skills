@@ -11,7 +11,7 @@ Test the combined feature against the full engineering spec. Exercise real appli
 
 ## Establish the target
 
-Read the required [external workspace contract](../setup-workflow/references/workspace.md), locating the installed setup-workflow companion if needed without installing it. Resolve the active workflow, full spec, canonical tickets, external context, and agreed combined checkout from project identity and saved pointers. Do not require the user to remember their paths. Read applicable repository instructions, ticket index/metadata, and relevant implementation/review handoffs. Read source as needed; do not audit unrelated code or load all prior transcripts. Missing context alone does not block safe discovery. Closing/completed workflows are not verification targets; later changes need a new workflow.
+When the coordinator supplies canonical paths, verify the project, active workflow, full spec, tickets, context, combined checkout, and handoff identities against the assignment; avoid repeating registry discovery. For standalone invocation or absent/inconsistent paths, use the required [external workspace contract](../setup-workflow/references/workspace.md), locating the installed companion if needed without installing it. Resolve paths from project identity and saved pointers. Read applicable repository instructions, ticket index/metadata, and relevant implementation/review handoffs. Read source as needed; do not audit unrelated code or load all prior transcripts. Missing context alone does not block safe discovery. Closing/completed workflows are not verification targets; later changes need a new workflow.
 
 Read this collection's [ticket format](../spec-to-tickets/references/ticket-format.md) and use its validator. Locate the installed spec-to-tickets companion if the sibling path is absent. If unavailable, report the missing dependency; do not install or invent it. Companion reads are part of this explicit invocation, not implicit skill selection.
 
@@ -24,6 +24,8 @@ In a coordinated run, use the assigned combined target and reserved resources af
 ## Plan the whole-feature checks
 
 Map every in-scope requirement and acceptance criterion to evidence. Start from the spec's scenarios, then check for omitted cross-ticket interactions, failure cases, and regression risks. Do not assume the listed scenarios exhaust the spec. Derive missing test mechanics from code and project conventions; ask one focused question only when expected behavior or a material constraint cannot be established. Do not invent requirements or rewrite the spec to match the code.
+
+Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) for first and repeated verification. On a correction round, begin with prior finding IDs, affected criteria/contracts, target delta, and candidate reusable evidence. Keep complete spec coverage while rerunning failed and affected integrated scenarios and validating carried unaffected observations.
 
 Use relevant selected project skill mappings for verification, including guidance shared with review. Read only applicable skills and required references as scoped guidance. Recommendations are not selected requirements. Missing optional guidance is not a blocker; missing required guidance blocks the affected conclusion. Stage boundaries and project rules still apply.
 
@@ -41,7 +43,7 @@ When a check fails, preserve its output and investigate whether it is a product 
 
 ## Report and hand off
 
-Follow [the report contract](references/report.md) for pass, fail, and blocked outcomes, artifact layout, target freshness, cleanup evidence, and revision routing. Save a new numbered report for each run. Preserve previous reports and reproduction harnesses.
+Follow [the report contract](references/report.md) for pass, fail, and blocked outcomes, artifact layout, target freshness, cleanup evidence, and revision routing. Save a new numbered report for each run. Preserve previous reports and reproduction harnesses. After cleanup, write the shared [handoff manifest](../setup-workflow/references/handoff-manifest.md) atomically at the exact assigned path; for standalone verification, place it in this run's evidence directory. Record the current combined target, report paths, new and reused evidence, skips, findings/blockers, and resource state. Claim `whole_feature_verified` only for a report-backed pass.
 
 The verifier writes verification artifacts and owned disposable build/test outputs, not product source or lifecycle state. It does not modify ticket lifecycle, review_ref, INDEX.md, or RUN.md. Send confirmed product findings and affected ticket/spec pointers to the coordinator. That owner routes corrections through implementation and review before another feature verification. A standalone invocation returns the same handoff without dispatching fix agents. After a pass, the coordinator performs registered-spec deletion through setup-workflow's closure contract. The verifier keeps specs intact until that handoff; it does not close the workflow itself.
 

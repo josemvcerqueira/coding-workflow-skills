@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Workflow status</title>
+  <style>
+    :root {
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #1e293b; background: #f1f5f9; font-synthesis: none;
+      --surface: #fff; --soft: #f8fafc; --ink: #1e293b; --muted: #64748b; --line: #dbe3ee;
+      --accent: #4f46e5; --accent-soft: #eef2ff; --amber: #8f5a08; --amber-soft: #fff2d8;
+      --red: #ae3b35; --red-soft: #fbe9e7; --blue: #315f8c; --blue-soft: #e9f0f7;
+      --neutral: #57534e; --neutral-soft: #f5f5f4; --neutral-line: #d6d3d1;
+      --complete: #fff; --complete-soft: #334155; --complete-line: #334155;
+      --violet: #7e22ce; --violet-soft: #f3e8ff; --violet-line: #d8b4fe;
+      --amber-line: #eed7a8; --red-line: #efc8c4; --blue-line: #cfdeeb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: #f1f5f9; color: var(--ink); font-size: 14px; line-height: 1.4; }
+    h1, h2, p { margin-top: 0; }
+    .shell { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 26px 0 40px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
+    h1 { margin-bottom: 3px; font-size: 1.6rem; line-height: 1.1; letter-spacing: -.035em; }
+    h2 { margin: 0; font-size: .92rem; letter-spacing: -.01em; }
+    .meta { margin: 0; color: var(--muted); font-size: .74rem; }
+    .panel { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    .pill { display: inline-flex; align-items: center; min-height: 25px; padding: 3px 9px; border: 1px solid var(--neutral-line); border-radius: 999px; color: var(--neutral); background: var(--neutral-soft); font-size: .7rem; font-weight: 760; white-space: nowrap; }
+    .pill::before { width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: currentColor; content: ""; }
+    .tone-good { color: var(--complete); background: var(--complete-soft); border-color: var(--complete-line); }
+    .tone-review { color: var(--violet); background: var(--violet-soft); border-color: var(--violet-line); }
+    .tone-warning { color: var(--amber); background: var(--amber-soft); border-color: var(--amber-line); }
+    .tone-critical { color: var(--red); background: var(--red-soft); border-color: var(--red-line); }
+    .tone-info { color: var(--blue); background: var(--blue-soft); border-color: var(--blue-line); }
+    .summary { display: grid; grid-template-columns: 1.25fr .75fr 1fr; margin-bottom: 14px; }
+    .stat { min-width: 0; padding: 15px 18px; border-right: 1px solid var(--line); }
+    .stat:last-child { border-right: 0; }
+    .stat-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: .69rem; font-weight: 700; text-transform: uppercase; letter-spacing: .055em; }
+    .stat-line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .stat-value { font-size: 1.28rem; font-weight: 790; letter-spacing: -.035em; white-space: nowrap; }
+    .stat-detail { overflow: hidden; color: var(--muted); font-size: .72rem; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+    .track { height: 5px; margin-top: 9px; overflow: hidden; border-radius: 99px; background: #dbe3ee; }
+    .track-fill { width: 0; height: 100%; border-radius: inherit; background: var(--accent); }
+    .alerts { display: grid; gap: 7px; margin-bottom: 14px; }
+    .alert, .error-banner { padding: 9px 12px; border: 1px solid #efc8c4; border-radius: 9px; color: var(--red); background: var(--red-soft); font-size: .78rem; }
+    .error-banner { display: none; margin-bottom: 14px; }
+    .error-banner.is-visible { display: block; }
+    .section { margin-bottom: 14px; }
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+    .work-list { display: grid; gap: 10px; padding: 12px; }
+    .work-card { padding: 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--soft); }
+    .work-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .work-title { margin: 0; font-size: 1rem; font-weight: 770; letter-spacing: -.015em; }
+    .work-stage { margin: 4px 0 0; color: var(--muted); font-size: .72rem; text-transform: capitalize; }
+    .work-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .work-field { min-width: 0; padding: 10px; border-radius: 8px; background: var(--surface); }
+    .work-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: .63rem; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
+    .work-value { overflow-wrap: anywhere; font-size: .78rem; font-weight: 680; }
+    .work-note { margin: 4px 0 0; color: var(--muted); font-size: .68rem; }
+    .work-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .outcome { min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .outcome-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+    .outcome-item { color: var(--ink); font-size: .74rem; }
+    .outcome-empty { color: var(--muted); font-size: .72rem; }
+    .ticket-head, .ticket-row { display: grid; grid-template-columns: minmax(260px, 1fr) 150px 90px 150px; gap: 14px; align-items: center; }
+    .ticket-head { padding: 8px 16px; border-bottom: 1px solid var(--line); color: var(--muted); background: var(--soft); font-size: .67rem; font-weight: 720; text-transform: uppercase; letter-spacing: .05em; }
+    .ticket-row { min-height: 54px; padding: 9px 16px; border-bottom: 1px solid var(--line); }
+    .ticket-row:last-child { border-bottom: 0; }
+    .ticket-main, .phase-cell, .context-cell { min-width: 0; }
+    .ticket-title { overflow: hidden; margin: 0; font-size: .82rem; font-weight: 680; text-overflow: ellipsis; white-space: nowrap; }
+    .ticket-id { margin-right: 8px; color: var(--muted); font-size: .68rem; font-weight: 790; }
+    .phase-cell { display: flex; align-items: center; gap: 7px; }
+    .phase-note, .context-caption { color: var(--muted); font-size: .66rem; }
+    .returned, .context-value { font-size: .78rem; font-weight: 690; }
+    .context-caption { margin-top: 2px; }
+    .agent-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .agent { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 65px; padding: 11px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .agent:nth-child(even) { border-right: 0; }
+    .agent:nth-last-child(-n + 2) { border-bottom: 0; }
+    .agent-name { overflow: hidden; font-size: .8rem; font-weight: 730; text-overflow: ellipsis; white-space: nowrap; }
+    .agent-subtitle { margin-top: 3px; color: var(--muted); font-size: .68rem; text-transform: capitalize; }
+    .agent-context { min-width: 92px; text-align: right; }
+    .agent-context strong { display: block; font-size: .8rem; }
+    .agent-context span { color: var(--muted); font-size: .65rem; }
+    .empty { margin: 0; padding: 20px 16px; color: var(--muted); text-align: center; font-size: .78rem; }
+    footer { display: flex; justify-content: space-between; gap: 16px; padding: 2px 1px 0; color: var(--muted); font-size: .67rem; }
+    @media (max-width: 760px) {
+      .summary { grid-template-columns: 1fr; }
+      .stat { border-right: 0; border-bottom: 1px solid var(--line); }
+      .stat:last-child { border-bottom: 0; }
+      .ticket-head { display: none; }
+      .work-grid { grid-template-columns: 1fr; }
+      .work-outcomes { grid-template-columns: 1fr; }
+      .ticket-row { grid-template-columns: 1fr auto; gap: 7px 12px; }
+      .returned::before { content: "Returned: "; color: var(--muted); font-weight: 500; }
+      .context-cell { text-align: right; }
+      .agent-list { grid-template-columns: 1fr; }
+      .agent, .agent:nth-child(even), .agent:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .agent:last-child { border-bottom: 0; }
+    }
+    @media (max-width: 480px) {
+      .shell { width: min(100% - 20px, 1080px); padding-top: 18px; }
+      header { align-items: flex-start; flex-direction: column; gap: 9px; }
+      .ticket-row { grid-template-columns: 1fr; }
+      .context-cell { text-align: left; }
+      footer { flex-direction: column; gap: 2px; }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --surface: #111827; --soft: #182235; --ink: #f8fafc; --muted: #94a3b8; --line: #334155; --accent: #a5b4fc; --accent-soft: #272554; --amber: #f0b962; --amber-soft: #382b17; --red: #ef837c; --red-soft: #3d2422; --blue: #93c5fd; --blue-soft: #1e3a5f; }
+      :root {
+        --neutral: #d6d3d1; --neutral-soft: #292524; --neutral-line: #57534e;
+        --complete: #f8fafc; --complete-soft: #475569; --complete-line: #64748b;
+        --violet: #d8b4fe; --violet-soft: #3b2055; --violet-line: #704396;
+        --amber-line: #725323; --red-line: #79443f; --blue-line: #3b6289;
+      }
+      body { background: #0b1120; } .track { background: #334155; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><h1>Workflow status</h1><p class="meta" id="workflow-name">Waiting for workflow data</p></div>
+      <span class="pill" id="run-mode">Connecting</span>
+    </header>
+    <p class="error-banner" id="connection-error" role="status" aria-live="polite"></p>
+    <section class="panel summary" id="run-summary" aria-label="Run summary">
+      <div class="stat"><span class="stat-label">Progress</span><div class="stat-line"><strong class="stat-value" id="progress-value">—</strong><span class="stat-detail" id="progress-detail">—</span></div><div class="track" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="track-fill" id="progress-fill"></div></div></div>
+      <div class="stat"><span class="stat-label">Active agents</span><div class="stat-line"><strong class="stat-value" id="agent-count">—</strong><span class="stat-detail" id="agent-detail">—</span></div></div>
+      <div class="stat"><span class="stat-label">Attention</span><div class="stat-line"><strong class="stat-value" id="attention-value">—</strong><span class="stat-detail" id="attention-detail">Health and schedule</span></div></div>
+    </section>
+    <section class="alerts" id="alerts" aria-label="Blockers" aria-live="polite"></section>
+    <section class="panel section" id="working-now" aria-labelledby="working-title">
+      <div class="section-head"><h2 id="working-title">Working now</h2><span class="meta" id="working-caption">Current outcomes</span></div>
+      <div class="work-list" id="work-list"></div>
+    </section>
+    <section class="panel section" id="active-tickets" aria-labelledby="tickets-title">
+      <div class="section-head"><h2 id="tickets-title">Tickets</h2><span class="meta" id="ticket-caption">—</span></div>
+      <div class="ticket-head" aria-hidden="true"><span>Ticket</span><span>Phase</span><span>Returned</span><span>Context / tokens</span></div>
+      <div id="ticket-list"></div>
+    </section>
+    <section class="panel section" id="agent-tree" aria-labelledby="agents-title">
+      <div class="section-head"><h2 id="agents-title">Agents</h2><span class="meta" id="agents-caption">Current work only</span></div>
+      <div class="agent-list" id="agent-list"></div>
+    </section>
+    <footer><span id="updated-at">Not refreshed yet</span><span>Read-only · updates automatically</span></footer>
+  </main>
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const activeStates = new Set(["in_progress", "implemented", "in_review", "revision_required"]);
+    const terminalHistoryStates = new Set(["complete", "completed", "failed", "paused", "stopped", "whole_feature_verified"]);
+
+    function element(tag, className, text) {
+      const item = document.createElement(tag);
+      if (className) item.className = className;
+      if (text !== undefined && text !== null) item.textContent = String(text);
+      return item;
+    }
+    function field(source, names, fallback = null) {
+      for (const name of names) if (source && source[name] !== undefined && source[name] !== null) return source[name];
+      return fallback;
+    }
+    function compactNumber(value, maximumFractionDigits = 0) {
+      if (value === null || value === undefined || Number.isNaN(Number(value))) return "—";
+      return new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits }).format(Number(value));
+    }
+    function time(value) {
+      if (!value) return "Not reported";
+      const parsed = new Date(value);
+      return Number.isNaN(parsed.getTime()) ? "Not reported" : parsed.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+    function tone(value) {
+      const label = String(value || "").toLowerCase();
+      if (label.includes("block") || label.includes("fail") || label.includes("stale") || label.includes("unexpected") || label.includes("connection lost")) return "tone-critical";
+      if (label.includes("pause") || label.includes("return") || label.includes("revision") || label.includes("rework") || label.includes("waiting") || label.includes("overdue") || label.includes("quiet")) return "tone-warning";
+      if (label.includes("complete") || label.includes("ready") || label.includes("reviewed") || label.includes("healthy") || label.includes("schedule")) return "tone-good";
+      if (label.includes("review")) return "tone-review";
+      if (label.includes("running") || label.includes("implementation")) return "tone-info";
+      return "tone-neutral";
+    }
+    function setPill(target, label) { target.className = `pill ${tone(label)}`; target.textContent = label; }
+    function ticketIntegrated(ticket) {
+      return ticket.status === "ready" && ticket.available === true && typeof ticket.integration_ref === "string" && ticket.integration_ref.trim().length > 0;
+    }
+    function ticketPhase(ticket) {
+      if ((ticket.blockers || []).length) return "Blocked";
+      if (ticketIntegrated(ticket)) return "Complete";
+      return { pending: "Not started", in_progress: "Implementation", implemented: "Awaiting review", in_review: "Review", revision_required: "Rework", ready: "Review complete", superseded: "Replaced" }[ticket.status] || "Unknown";
+    }
+    function currentAssignment(agent, tickets) {
+      if (typeof agent.current_assignment === "boolean") return agent.current_assignment;
+      if (terminalHistoryStates.has(agent.state)) return false;
+      if (agent.role === "coordinator") return true;
+      const ticketId = field(agent, ["ticket_id", "ticket"]);
+      if (!ticketId) return true;
+      const ticket = tickets.find((item) => item.id === ticketId);
+      return Boolean(ticket && activeStates.has(ticket.status));
+    }
+    function occupancy(source) {
+      const telemetry = source?.telemetry || source || {};
+      const supplied = field(telemetry, ["context_occupancy"]);
+      if (typeof supplied === "number") return Math.min(100, Math.max(0, supplied * 100));
+      const used = field(telemetry, ["latest_input_tokens", "context_tokens"]);
+      const windowSize = field(telemetry, ["context_window", "model_context_window"]);
+      return used !== null && windowSize ? Math.min(100, (Number(used) / Number(windowSize)) * 100) : null;
+    }
+    function contextText(source) {
+      const telemetry = source?.telemetry || source || {};
+      const used = field(telemetry, ["latest_input_tokens", "context_tokens"]);
+      const windowSize = field(telemetry, ["context_window", "model_context_window"]);
+      return used !== null && windowSize ? `${compactNumber(used)} / ${compactNumber(windowSize)}` : "Not reported";
+    }
+    function tokenUsage(source) {
+      const telemetry = source?.telemetry || source || {};
+      const used = field(telemetry, ["latest_input_tokens", "context_tokens"]);
+      const totals = field(telemetry, ["totals", "token_totals"], {});
+      const total = field(totals, ["total_tokens"], field(telemetry, ["total_tokens", "cumulative_tokens"]));
+      const context = occupancy(source);
+      const sessionTotal = total === null ? null : `${compactNumber(total, 1)} session total`;
+      if (context !== null) {
+        const contextDetail = contextText(source);
+        return { value: `${Math.round(context)}%`, note: sessionTotal ? `${contextDetail} · ${sessionTotal}` : contextDetail };
+      }
+      if (used !== null) return { value: `${compactNumber(used)} latest input`, note: sessionTotal || "Session total not reported" };
+      if (sessionTotal) return { value: sessionTotal, note: "Latest input not reported" };
+      return { value: "—", note: "Not reported" };
+    }
+    function humanAgentName(agent) {
+      const role = String(field(agent, ["role"], "agent")).replaceAll("_", " ").replaceAll("-", " ");
+      if (role === "coordinator") return "Coordinator";
+      const ticket = field(agent, ["ticket_id", "ticket"]);
+      const cleanRole = role.includes("review") ? "Reviewer" : role.includes("implement") || role === "ticket owner" ? "Implementer" : "Agent";
+      return ticket ? `${ticket} ${cleanRole}` : cleanRole;
+    }
+    function coordinatorFor(data) {
+      const agents = data.agents || [];
+      const path = field(data.run, ["coordinator_agent_path"]);
+      if (path) { const exact = agents.find((agent) => agent.agent_path === path); if (exact) return exact; }
+      return [...agents].filter((agent) => agent.role === "coordinator").sort((left, right) => String(right.updated_at || "").localeCompare(String(left.updated_at || "")))[0] || null;
+    }
+    function completeCount(tickets) { return tickets.filter((ticket) => ticket.status !== "superseded" && ticketIntegrated(ticket)).length; }
+    function readable(value, fallback = "Not reported") {
+      if (!value) return fallback;
+      return String(value).replaceAll("_", " ").replaceAll("-", " ");
+    }
+    function duration(value) {
+      const seconds = Number(value);
+      if (!Number.isFinite(seconds) || seconds < 0) return "—";
+      if (seconds < 60) return `${Math.round(seconds)}s`;
+      if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+      const hours = seconds / 3600;
+      return `${hours >= 10 ? Math.round(hours) : hours.toFixed(1).replace(".0", "")}h`;
+    }
+    function modelText(ticket) {
+      const observedModel = field(ticket, ["observed_model"]);
+      const observedProvider = field(ticket, ["observed_provider"]);
+      if (observedModel) return `${readable(observedProvider, "Runtime")} · ${observedModel} (observed)`;
+      const requestedModel = field(ticket, ["requested_model"]);
+      const requestedProvider = field(ticket, ["runtime_provider"]);
+      if (requestedModel) return `${readable(requestedProvider, "Runtime")} · ${requestedModel} requested; model not reported by runtime`;
+      return "Model not reported by runtime";
+    }
+    function ticketLabel(tickets, identifier) {
+      const match = tickets.find((ticket) => ticket.id === identifier);
+      return match ? `${identifier} · ${match.title}` : identifier;
+    }
+
+    function renderSummary(data) {
+      const tickets = (data.tickets || []).filter((ticket) => ticket.status !== "superseded");
+      const currentAgents = (data.agents || []).filter((agent) => currentAssignment(agent, tickets));
+      const complete = completeCount(tickets);
+      const percent = tickets.length ? Math.round((complete / tickets.length) * 100) : 0;
+      const mode = String(field(data.run, ["mode", "state"], "Unknown")).replaceAll("_", " ");
+      byId("workflow-name").textContent = field(data.run, ["name"], "Local workflow");
+      setPill(byId("run-mode"), mode.charAt(0).toUpperCase() + mode.slice(1));
+      byId("progress-value").textContent = `${complete} / ${tickets.length}`;
+      byId("progress-detail").textContent = `${percent}% complete`;
+      byId("progress-fill").style.width = `${percent}%`;
+      byId("progress-fill").parentElement.setAttribute("aria-valuenow", String(percent));
+      byId("agent-count").textContent = String(currentAgents.length);
+      byId("agent-detail").textContent = terminalHistoryStates.has(field(data.run, ["mode"])) ? "Workflow paused" : "Working now";
+      const attention = Number(field(data.summary, ["attention"], 0));
+      byId("attention-value").textContent = String(attention);
+      byId("attention-detail").textContent = attention ? "Needs a look" : "Healthy and on track";
+    }
+    function renderAlerts(data) {
+      const region = byId("alerts"); region.replaceChildren();
+      const actionable = (data.alerts || []).filter((alert) => ["blocked", "stale", "stopped_unexpectedly", "overdue", "owner_conflict", "coordinator_conflict", "integration_unreported"].includes(alert.kind));
+      for (const alert of actionable) {
+        const prefix = alert.ticket_id ? `${alert.ticket_id}: ` : "";
+        const raw = field(alert, ["message"], "Action needed");
+        const message = raw.includes(": ") ? raw.slice(raw.indexOf(": ") + 2) : raw;
+        region.append(element("div", "alert", `${prefix}${message}`));
+      }
+    }
+    function renderWorkingNow(data) {
+      const list = byId("work-list"); list.replaceChildren();
+      const tickets = data.tickets || [];
+      const active = tickets.filter((ticket) => activeStates.has(ticket.status));
+      byId("working-caption").textContent = active.length === 1 ? "1 ticket in motion" : `${active.length} tickets in motion`;
+      if (!active.length) { list.append(element("p", "empty", "No ticket work is active.")); return; }
+      for (const ticket of active) {
+        const card = element("article", "work-card");
+        const top = element("div", "work-top");
+        const identity = element("div");
+        identity.append(
+          element("h3", "work-title", `${field(ticket, ["id"], "Ticket")} · ${field(ticket, ["title"], "Untitled")}`),
+          element("p", "work-stage", `${readable(field(ticket, ["stage"], ticketPhase(ticket)))} · ${field(ticket, ["owner"], "Owner not reported")}`),
+        );
+        const health = readable(field(ticket, ["health"], "Not reported"));
+        const healthPill = element("span"); setPill(healthPill, health.charAt(0).toUpperCase() + health.slice(1));
+        top.append(identity, healthPill); card.append(top);
+
+        const grid = element("div", "work-grid");
+        const healthField = element("div", "work-field");
+        healthField.append(element("span", "work-label", "Health"), element("div", "work-value", health), element("p", "work-note", field(ticket, ["health_reason"], "Health detail not reported")));
+        const timingField = element("div", "work-field");
+        const elapsed = duration(field(ticket, ["stage_elapsed_seconds", "elapsed_seconds"]));
+        const expectedValue = field(ticket, ["expected_duration_seconds"]);
+        const expected = expectedValue === null ? "Expected duration not set" : duration(expectedValue);
+        const schedule = readable(field(ticket, ["schedule_status"], "not_estimated"));
+        const overdue = field(ticket, ["overdue_seconds"]);
+        const timingNote = overdue > 0 ? `${duration(overdue)} overdue` : schedule;
+        timingField.append(element("span", "work-label", "Elapsed / expected"), element("div", "work-value", `${elapsed} / ${expected}`), element("p", "work-note", timingNote));
+        const modelField = element("div", "work-field");
+        modelField.append(element("span", "work-label", "Runtime model"), element("div", "work-value", modelText(ticket)));
+        const tokenField = element("div", "work-field");
+        const tokens = tokenUsage(ticket);
+        tokenField.append(element("span", "work-label", "Token use"), element("div", "work-value", tokens.value), element("p", "work-note", tokens.note));
+        grid.append(healthField, timingField, modelField, tokenField); card.append(grid);
+
+        const milestone = element("div", "work-field");
+        const blockers = ticket.blockers || [];
+        milestone.append(
+          element("span", "work-label", blockers.length ? "Blocker" : "Current milestone"),
+          element("div", "work-value", blockers[0] || field(ticket, ["summary"], "No milestone reported")),
+          element("p", "work-note", field(ticket, ["next_action"], "Next action not reported")),
+        );
+        card.append(milestone);
+
+        const outcomes = element("div", "work-outcomes");
+        const ready = element("div", "outcome");
+        ready.append(element("span", "work-label", "Ready next"));
+        const readyIds = ticket.ready_after_completion || [];
+        if (readyIds.length) {
+          const readyList = element("ul", "outcome-list");
+          for (const identifier of readyIds) readyList.append(element("li", "outcome-item", ticketLabel(tickets, identifier)));
+          ready.append(readyList);
+        } else ready.append(element("div", "outcome-empty", "No ticket becomes dependency-ready yet."));
+        const closer = element("div", "outcome");
+        closer.append(element("span", "work-label", "Moves closer"));
+        const waiting = ticket.still_waiting_after_completion || [];
+        if (waiting.length) {
+          const waitingList = element("ul", "outcome-list");
+          for (const item of waiting) waitingList.append(element("li", "outcome-item", `${ticketLabel(tickets, item.ticket_id)} · still waits on ${(item.waiting_on || []).join(", ")}`));
+          closer.append(waitingList);
+        } else closer.append(element("div", "outcome-empty", "No other direct dependent remains blocked."));
+        outcomes.append(ready, closer); card.append(outcomes); list.append(card);
+      }
+    }
+    function renderTickets(data) {
+      const list = byId("ticket-list"); list.replaceChildren();
+      const tickets = data.tickets || [];
+      byId("ticket-caption").textContent = `${completeCount(tickets)} complete · ${tickets.length} total`;
+      if (!tickets.length) { list.append(element("p", "empty", "No tickets yet.")); return; }
+      for (const ticket of tickets) {
+        const row = element("article", "ticket-row");
+        const main = element("div", "ticket-main");
+        const title = element("p", "ticket-title");
+        title.append(element("span", "ticket-id", field(ticket, ["id"], "Ticket")), document.createTextNode(field(ticket, ["title"], "Untitled")));
+        main.append(title);
+        const phase = ticketPhase(ticket);
+        const phaseCell = element("div", "phase-cell");
+        const phasePill = element("span"); setPill(phasePill, phase); phaseCell.append(phasePill);
+        if (ticket.status === "in_progress" && terminalHistoryStates.has(field(data.run, ["mode"]))) phaseCell.append(element("span", "phase-note", "Paused"));
+        const returns = Number(field(ticket, ["revision_count"], 0));
+        const returned = element("div", "returned", returns === 1 ? "1 time" : `${returns} times`);
+        const ticketUsage = tokenUsage(ticket);
+        const context = element("div", "context-cell");
+        context.append(element("div", "context-value", ticketUsage.value), element("div", "context-caption", ticketUsage.note));
+        row.append(main, phaseCell, returned, context); list.append(row);
+      }
+    }
+    function relevantAgents(data) {
+      const tickets = data.tickets || []; const agents = data.agents || [];
+      const currentAgents = agents.filter((agent) => currentAssignment(agent, tickets));
+      if (currentAgents.length) return currentAgents;
+      const relevant = []; const coordinator = coordinatorFor(data); if (coordinator) relevant.push(coordinator);
+      for (const ticket of tickets.filter((item) => activeStates.has(item.status))) {
+        const candidates = agents.filter((agent) => agent.ticket_id === ticket.id).sort((left, right) => String(right.updated_at || "").localeCompare(String(left.updated_at || "")));
+        if (candidates[0] && !relevant.includes(candidates[0])) relevant.push(candidates[0]);
+      }
+      return relevant;
+    }
+    function renderAgents(data) {
+      const list = byId("agent-list"); list.replaceChildren();
+      const agents = relevantAgents(data);
+      const active = agents.filter((agent) => currentAssignment(agent, data.tickets || [])).length;
+      byId("agents-caption").textContent = active ? `${active} working now` : "Paused work";
+      if (!agents.length) { list.append(element("p", "empty", "No agents assigned.")); return; }
+      for (const agent of agents) {
+        const card = element("article", "agent"); const identity = element("div");
+        const ticket = field(agent, ["ticket_id"]); const activeNow = currentAssignment(agent, data.tickets || []);
+        const state = activeNow ? String(agent.stage || "Working").replaceAll("_", " ") : "Paused";
+        identity.append(element("div", "agent-name", humanAgentName(agent)), element("div", "agent-subtitle", ticket ? state : `Workflow · ${state}`));
+        const tokens = tokenUsage(agent); const usage = element("div", "agent-context");
+        usage.append(element("strong", null, tokens.value), element("span", null, tokens.note));
+        card.append(identity, usage); list.append(card);
+      }
+    }
+    function render(data) {
+      renderSummary(data); renderAlerts(data); renderWorkingNow(data); renderTickets(data); renderAgents(data);
+      byId("updated-at").textContent = `Updated ${time(data.generated_at)}`;
+      const banner = byId("connection-error");
+      if (data.telemetry_refresh_error) { banner.textContent = "Context data could not refresh. The last snapshot is still shown."; banner.classList.add("is-visible"); }
+      else banner.classList.remove("is-visible");
+    }
+    let refreshInFlight = false, latestSequence = -1, latestGeneratedAt = null, latestRefreshError = null, refreshDelay = 3000;
+    async function refresh() {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
+      const controller = new AbortController(); const timeout = window.setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch("/api/status", { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`status ${response.status}`);
+        const data = await response.json(); const sequence = Number(data.snapshot_sequence); const generatedAt = data.generated_at || null; const refreshError = data.telemetry_refresh_error || null;
+        const sequenceAdvanced = !Number.isFinite(sequence) || sequence > latestSequence;
+        const snapshotChanged = latestGeneratedAt === null || (generatedAt && generatedAt !== latestGeneratedAt) || (!generatedAt && sequenceAdvanced) || refreshError !== latestRefreshError;
+        if (snapshotChanged) { latestSequence = Number.isFinite(sequence) ? sequence : latestSequence; latestGeneratedAt = generatedAt || latestGeneratedAt || ""; latestRefreshError = refreshError; render(data); }
+        refreshDelay = 3000;
+      } catch (error) {
+        const banner = byId("connection-error"); banner.textContent = "The dashboard could not refresh. The last snapshot is still shown."; banner.classList.add("is-visible"); setPill(byId("run-mode"), "Connection lost"); refreshDelay = Math.min(15000, refreshDelay * 2);
+      } finally { window.clearTimeout(timeout); refreshInFlight = false; window.setTimeout(refresh, refreshDelay); }
+    }
+    refresh();
+  </script>
+</body>
+</html>

@@ -33,8 +33,10 @@ external_blockers: []
 assignee: null
 implementation_ref: null
 review_ref: null
+integration_ref: null
 available: false
 superseded_by: []
+sizing_exception: null
 ---
 ```
 
@@ -46,8 +48,10 @@ superseded_by: []
 - `assignee`: assigned implementation agent or task identifier; null before assignment.
 - `implementation_ref`: usable commit, branch with revision, or other concrete implementation location. Required for implemented, in_review, revision_required, and ready.
 - `review_ref`: relative path to the current review report. Required for ready and revision_required. Null before review; older unreviewed tickets may omit it. Reports retain both reviewer outcomes, the reviewed target, and check evidence.
+- `integration_ref`: relative path to the coordinator-written integration `handoff.json`. Keep it null until authorized placement in the agreed consumer base has completed and its exact source identity and checks are recorded. When present, the validator requires the same ticket ID, schema version 1, `integration` stage, `integrated` outcome, and source/check/report/cleanup sections on ready, available work. Older tickets may omit it; `available: true` without this field remains usable for dependency scheduling but is not enough for the dashboard or feature verifier to claim integration.
 - `available`: true only when the implementation is accessible in the consumers' agreed working base. It does not mean reviewed.
 - `superseded_by`: replacement IDs for a superseded ticket, otherwise empty.
+- `sizing_exception`: normally null. Use a concise nonempty rationale when keeping an unusually broad but coherent outcome together is safer than splitting it. It is not a token budget or permission to bundle unrelated behaviors. Validator count warnings are advisory and do not require this field or disappear when it is supplied.
 
 Assignment readiness is derived: a pending ticket is an assignment candidate when external blockers are empty and all prerequisites have `status: "ready"` and `available: true`. Running implementation or review may prevent assignment through exclusive-resource conflicts. The validator's `ready` list contains pending candidates; ticket `status: "ready"` means reviewed completion, not waiting to start.
 
@@ -79,11 +83,11 @@ Link each prerequisite file, state the exact capability required, and explain ho
 
 ### Working-path verification
 
-Give relevant setup, action, and expected result for demonstrating the slice. Include frontend/backend startup or environment references for UI flows. Distinguish the implementing agent's necessary checks from later independent testing and review.
+Give relevant setup, action, and expected result for demonstrating the slice on its declared starting base, even if no later ticket runs. Include frontend/backend startup or environment references for UI flows. Identify focused implementation checks and affected regressions, then link combined-feature scenarios and their integration trigger. Explain unavoidable expensive checks; reuse setup references. Distinguish the implementing agent's necessary checks from later independent testing and review.
 
 ### Sizing
 
-Explain why the slice should fit roughly one 200k context window for implementation, including debugging and necessary checks. Name uncertainty or justify an exception. Exclude later review and style-improvement budgets.
+Record the audit conclusion: the single useful outcome, why it works before later tickets, the main uncertainty, and the smallest meaningful verification boundary. Explain the chosen split or why a smaller split would add handoffs without a usable outcome. Keep implementation and necessary checks within one focused context with debugging headroom. Account for repeated setup and review when comparing splits, while excluding later review from the implementer's context budget. Justify any metadata exception; runtime compaction supports continuity, not oversized assignments.
 
 ### Implementation record
 
@@ -101,7 +105,7 @@ Include:
 
 - Source spec link, its SHA-256 digest, and last-updated date.
 - One compact row per ticket: linked ID, title, status, blocked by, derived unblocks, and exclusive resources.
-- A requirement/acceptance coverage map.
+- A requirement/acceptance coverage map. Shared criteria name each ticket's contribution and the combined scenario that proves the complete criterion.
 - Initially ready tickets and conditional parallel candidates, derived from current state. Label these as a snapshot that must be recomputed before assignment.
 - Any exceptions or unresolved material gaps.
 
@@ -115,11 +119,11 @@ Use a single assignment coordinator to claim tickets and update the index. Markd
 
 The optional `coordinate-work` skill supplies the execution loop and owns `<workflow>/RUN.md`, runtime mappings, and coordinator ownership. Keep this ticket directory canonical across code worktrees. Its stable assignment IDs are valid assignee values; runtime agent IDs are mapped separately in RUN.md. Planning does not acquire an execution lock or dispatch work.
 
-The coordinator sets the assignee and in_progress status before dispatch, including revision work. The assigned implementer updates only its ticket and implementation record. It records implemented only when the slice works and reports the checks and implementation reference. The coordinator records availability after checking that downstream work can access the implementation, then refreshes the index. Availability alone never bypasses review.
+The coordinator sets the assignee and in_progress status before dispatch, including revision work. The assigned implementer updates only its ticket and implementation record. It records implemented only when the slice works and reports the checks and implementation reference. The coordinator records availability after checking that downstream work can access the implementation, then refreshes the index. After authorized integration, it also records the relative `integration_ref` to that assignment's exact handoff manifest. Availability alone never bypasses review or proves integration.
 
 Implemented means the working implementation stage is complete. It does not mean code-quality review, spec review, or publication has occurred. Those stages remain separate.
 
-The `review-ticket` parent coordinates with the assignment owner and is the only writer during review. Two independent reviewers return evidence; they do not edit code or ticket state. The parent transitions implemented to in_review, then ready or revision_required. Missing required verification leaves in_review with a blocked review record, not a pass. Revisions return through assigned in_progress, implemented, and another review. Review never implies permission to merge, deploy, or implement the next ticket.
+The `review-ticket` parent coordinates with the assignment owner and is the only writer of ticket, review, and index state during review. One reviewer covers both axes—quality and behavior—by default; the coordinator adds a second independent reviewer only under the recorded risk rules. Reviewers are read-only except for a parent-granted bounded reviewer repair with its exact lease and checks. The parent transitions implemented to in_review, then ready or revision_required. Missing required verification leaves in_review with a blocked review record, not a pass. Revisions return through assigned in_progress, implemented, and another review. Review never implies permission to merge, deploy, or implement the next ticket.
 
 Bind review evidence to the exact code target and relevant spec version. Code changes require renewed review evidence. A reopened prerequisite can invalidate downstream readiness. Notify the assignment owner, preserve the graph, and pause affected work through that owner.
 

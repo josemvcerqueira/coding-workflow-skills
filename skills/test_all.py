@@ -7,9 +7,14 @@ from pathlib import Path
 
 
 def load_tests(loader, _tests, pattern):
-    root = Path(__file__).resolve().parent
+    root = Path(__file__).resolve().parents[1]
     suite = unittest.TestSuite()
-    for relative in ("coordinate-work/scripts", "spec-to-tickets/scripts"):
+    for relative in (
+        "apps/workflow-dashboard/tests",
+        "tests",
+        "skills/review-ticket/scripts",
+        "skills/spec-to-tickets/scripts",
+    ):
         for path in sorted((root / relative).glob(pattern or "test_*.py")):
             name = "workflow_tests_" + "_".join(path.relative_to(root).parts).replace("-", "_").removesuffix(".py")
             spec = importlib.util.spec_from_file_location(name, path)
@@ -23,3 +28,7 @@ def load_tests(loader, _tests, pattern):
                 sys.path.pop(0)
             suite.addTests(loader.loadTestsFromModule(module))
     return suite
+
+
+if __name__ == "__main__":
+    unittest.main(module=__name__)

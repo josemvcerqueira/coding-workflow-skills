@@ -10,8 +10,10 @@ Record a reproducible content identity for dirty work: baseline plus the include
 
 An empty diff is not an automatic pass. Resolve wrong baselines or missing changes. An outcome already satisfied by unchanged code can be reviewed only with an explicit explanation and current requirement evidence.
 
-Both reviewers must inspect the same target. Use a stable checkout with no concurrent implementation edits or an isolated copy that contains all in-scope dirty files. A new worktree from HEAD alone omits uncommitted work. Do not reset, stash, or overwrite user changes to create isolation.
+Every assigned reviewer must inspect the same target. Use a stable checkout with no concurrent implementation edits or an isolated copy that contains all in-scope dirty files. A new worktree from HEAD alone omits uncommitted work. Do not reset, stash, or overwrite user changes to create isolation.
+
+A parent-authorized bounded reviewer repair creates one explicit successor target within the same review round. Record both source identities and the repair delta. Complete every assigned reviewer's independent first inspection before granting the repair lease. Revalidate only evidence affected by that delta under the reviewer-repair contract; unchanged evidence can remain applicable after an explicit freshness check.
 
 Hash the spec when review starts. If it differs from the ticket set's recorded digest, inspect the change and its effect on this ticket. Do not rewrite the index digest as if every ticket were reconciled. Preserve resolved decisions and report material scope changes.
 
-Before finalization, compare the target, relevant spec, and standards inputs again. Exclude review artifacts and expected disposable test output from the code identity. If relevant inputs changed, preserve the old reports as stale and obtain both reviewers' assessments of the current target. Each must state whether its prior evidence still applies and run affected checks again. No pass carries forward silently.
+Before finalization, compare the target, relevant spec, and standards inputs again. Exclude review artifacts and expected disposable test output from the code identity. If relevant inputs changed, preserve the old reports as stale and obtain every assigned reviewer's assessment of the current target. Both axes must be reassessed; each reviewer must state whether its prior evidence still applies and run affected checks again. No pass carries forward silently.

@@ -55,6 +55,8 @@ For a material interface, specify enough detail for two implementers to agree on
 
 Map acceptance criteria to suitable verification methods. Identify existing test conventions, required fixtures or setup, expected outcomes, and relevant regression coverage. Describe what needs verification, without claiming it has already passed.
 
+For each distinct verification boundary, distinguish focused acceptance checks, combined-feature scenarios, and repository-required gates. Link reusable setup; note real-service needs and known execution costs or mark them unknown. Define which contracts must be stable for separate implementations to proceed. These are inputs to ticket decomposition, not predetermined tickets or a requirement to repeat all checks per ticket.
+
 ### Whole-feature scenarios
 
 Give each important scenario a stable SC identifier and linked REQ/AC identifiers. Include:

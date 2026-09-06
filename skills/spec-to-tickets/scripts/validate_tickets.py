@@ -11,6 +11,76 @@ import sys
 from pathlib import Path
 
 
+def _canonical_absolute_path(value):
+    return isinstance(value, str) and Path(value).is_absolute() and Path(value).resolve() == Path(value)
+
+
+def _existing_absolute_file(value):
+    return _canonical_absolute_path(value) and Path(value).is_file()
+
+
+def _valid_integration_handoff(manifest, ticket_id):
+    required_types = {
+        "schema_version": int,
+        "assignment_id": str,
+        "ticket_id": str,
+        "stage": str,
+        "outcome": str,
+        "source_identity": dict,
+        "report_paths": list,
+        "checks": list,
+        "cleanup": dict,
+    }
+    if (
+        not isinstance(manifest, dict)
+        or any(type(manifest.get(key)) is not kind for key, kind in required_types.items())
+        or manifest["schema_version"] != 1
+        or not manifest["assignment_id"].strip()
+        or manifest["ticket_id"] != ticket_id
+        or manifest["stage"] != "integration"
+        or manifest["outcome"] != "integrated"
+    ):
+        return False
+    source = manifest["source_identity"]
+    if set(("repository", "checkout", "base_revision", "target_revision", "dirty_content_manifest")) - set(source):
+        return False
+    if not all(
+        _canonical_absolute_path(source.get(key)) and Path(source[key]).is_dir()
+        for key in ("repository", "checkout")
+    ):
+        return False
+    if not isinstance(source.get("base_revision"), str) or not source["base_revision"].strip():
+        return False
+    target = source.get("target_revision")
+    dirty = source.get("dirty_content_manifest")
+    if not (isinstance(target, str) and target.strip()) and not _existing_absolute_file(dirty):
+        return False
+    if not manifest["report_paths"] or any(not _existing_absolute_file(path) for path in manifest["report_paths"]):
+        return False
+    if not manifest["checks"] or not any(
+        isinstance(check, dict) and check.get("result") == "pass" for check in manifest["checks"]
+    ):
+        return False
+    for check in manifest["checks"]:
+        if not isinstance(check, dict):
+            return False
+        if not isinstance(check.get("command"), str) or not check["command"].strip():
+            return False
+        if check.get("result") not in {"pass", "fail", "blocked", "not_run"}:
+            return False
+        if check.get("evidence_path") is not None and not _existing_absolute_file(check["evidence_path"]):
+            return False
+        if not isinstance(check.get("explicit_skips"), list):
+            return False
+    cleanup = manifest["cleanup"]
+    return (
+        cleanup.get("processes") in {"stopped", "retained", "unknown"}
+        and cleanup.get("resources") in {"released", "retained", "unknown"}
+        and isinstance(cleanup.get("details"), list)
+        and all(isinstance(item, str) for item in cleanup["details"])
+    )
+
+
 def validate(root):
     root = Path(root)
     errors = []
@@ -33,6 +103,7 @@ def validate(root):
         return {"errors": errors}
 
     tickets = {}
+    sizing_risks = {}
     fields = {
         "id": str, "title": str, "status": str, "spec": str,
         "spec_refs": list, "blocked_by": list, "exclusive_resources": list,
@@ -72,6 +143,31 @@ def validate(root):
                     data[key] is None or isinstance(data[key], str) and data[key].strip()
                 ):
                     raise ValueError(f"{key} must be null or a nonempty string")
+            sizing_exception = data.get("sizing_exception")
+            if sizing_exception is not None and not (
+                isinstance(sizing_exception, str) and sizing_exception.strip()
+            ):
+                raise ValueError("sizing_exception must be null or a nonempty rationale")
+            integration_ref = data.get("integration_ref")
+            if integration_ref is not None:
+                if not isinstance(integration_ref, str) or not integration_ref.strip() or Path(integration_ref).is_absolute():
+                    raise ValueError("integration_ref must be null or a relative handoff path")
+                workflow_root = root.parent if root.name == "tickets" else root
+                try:
+                    integration_path = (root / integration_ref).resolve(strict=True)
+                    integration_path.relative_to(workflow_root.resolve())
+                except (OSError, ValueError):
+                    raise ValueError("Missing integration handoff")
+                if not integration_path.is_file():
+                    raise ValueError("Missing integration handoff")
+                try:
+                    integration = json.loads(integration_path.read_text(encoding="utf-8"))
+                except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+                    raise ValueError("Invalid integration handoff") from exc
+                if not _valid_integration_handoff(integration, data["id"]):
+                    raise ValueError("Invalid integration handoff")
+                if data["status"] != "ready" or not data["available"]:
+                    raise ValueError("Only ready, available work can record integration_ref")
             tid = data["id"]
             if not re.fullmatch(r"T-[0-9]{3,}", tid) or path.stem != tid:
                 raise ValueError("ID must match filename, such as T-001.md")
@@ -110,6 +206,25 @@ def validate(root):
             for ref in data["spec_refs"]:
                 if not re.search(r"(?<![\w-])" + re.escape(ref) + r"(?![\w-])", source):
                     raise ValueError(f"Spec reference not found: {ref}")
+            local_acceptance_criteria = set(
+                re.findall(r"\*\*" + re.escape(tid) + r"-AC-[0-9]+\*\*", text)
+            )
+            sizing_signals = []
+            if len(local_acceptance_criteria) >= 5:
+                sizing_signals.append(f"{len(local_acceptance_criteria)} acceptance criteria")
+            if len(data["spec_refs"]) >= 16:
+                sizing_signals.append(f"{len(data['spec_refs'])} spec references")
+            if len(data["exclusive_resources"]) >= 4:
+                sizing_signals.append(f"{len(data['exclusive_resources'])} exclusive contracts")
+            # Counts describe documentation breadth, not implementation effort.
+            # Keep these legacy signals advisory for both new and old tickets;
+            # an exception rationale cannot prove that a slice is well sized.
+            if len(sizing_signals) >= 2 and status == "pending":
+                sizing_risks[tid] = (
+                    "Scope review prompt: " + ", ".join(sizing_signals)
+                    + "; counts do not establish size. Check the observable outcome, "
+                    "uncertainty, and verification cost before assignment"
+                )
             tickets[tid] = data
         except (ValueError, OSError) as exc:
             errors.append(f"{path.name}: {exc}")
@@ -176,6 +291,7 @@ def validate(root):
     return {
         "errors": [],
         "ticket_count": len(tickets),
+        "sizing_risks": sizing_risks,
         "ready": ready,
         "assignable_with_current_active_work": assignable,
         "unblocks": {tid: [other for other, d in tickets.items() if tid in d["blocked_by"]]

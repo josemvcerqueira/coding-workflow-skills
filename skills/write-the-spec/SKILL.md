@@ -67,22 +67,15 @@ Describe how to verify the requirements through observable outcomes, including r
 
 Identify necessary test setup, data, and expected results. Define verification intent rather than assertions tied to private implementation details. Do not claim that tests have run, that code passes, or that a future implementation is correct.
 
+Distinguish focused acceptance checks from combined-feature scenarios and repository-required gates. Identify the smallest real boundary that can prove each outcome, shared setup costs, and checks that require live services. Reuse measured command durations when available; otherwise mark cost unknown. This lets ticket planning choose testable slices without assigning the entire end-to-end suite to each slice. Keep required failure cases with the behavior they protect.
+
 Include a whole-feature verification plan for the later verify-feature stage. Give important end-to-end scenarios stable SC identifiers and map them to REQ and AC identifiers. Cover complete public-interface journeys, state changes, consequential failures, and interactions between planned components. The ticket boundaries are not known yet; do not limit scenarios to isolated components. State preconditions, test data, ordered actions, observable results, required real boundaries, permitted external sandboxes, and relevant regression checks. Include persistence, restart, concurrency, or performance checks when required by the feature, not mechanically for every spec.
 
 Link project startup, readiness, configuration, and cleanup instructions from context or their actual source files instead of duplicating them. Describe feature-specific environment needs here. If commands or the application do not yet exist, label the setup as planned and identify what implementation must supply. Do not invent tested commands. The verifier may derive execution mechanics, but material gaps in expected behavior must be resolved in the spec. Require a stable combined implementation for final verification; passing individual ticket checks is not a whole-feature pass.
 
 ## Use Simplified Technical English
 
-Use English based on ASD-STE100 principles throughout the specification and user messages:
-
-- Write short, direct sentences with one main idea each.
-- Use active voice, concrete verbs, and consistent terms.
-- Define unfamiliar technical terms.
-- Make actors, conditions, and consequences explicit.
-- Avoid idioms, business jargon, and ambiguous references.
-- Preserve exact identifiers, contracts, conditions, and technical meaning.
-
-Do not claim formal ASD-STE100 compliance without checking its controlled dictionary and writing rules.
+Use short, direct sentences, active voice, and consistent terms based on STE principles. Define unfamiliar terms and make conditions explicit. Preserve exact identifiers and technical meaning. Do not claim formal ASD-STE100 compliance.
 
 ## Save and hand off
 

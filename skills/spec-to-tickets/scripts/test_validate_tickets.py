@@ -20,7 +20,8 @@ class TicketValidationTests(unittest.TestCase):
         data = dict(id=tid, title="Working slice", status="pending", spec="spec.md",
                     spec_refs=["REQ-001", "AC-001"], blocked_by=[],
                     exclusive_resources=[], external_blockers=[], assignee=None,
-                    implementation_ref=None, available=False, superseded_by=[])
+                    implementation_ref=None, available=False, superseded_by=[],
+                    sizing_exception=None)
         data.update(changes)
         metadata = "\n".join(f"{key}: {json.dumps(value)}" for key, value in data.items())
         (self.root / f"{tid}.md").write_text(f"---\n{metadata}\n---\n# Outcome\n", encoding="utf-8")
@@ -33,6 +34,35 @@ class TicketValidationTests(unittest.TestCase):
                       review_ref=str(report.relative_to(self.root)), available=True)
         values.update(changes)
         self.ticket(tid, **values)
+
+    def integration_manifest(self, tid="T-001"):
+        evidence = self.root / "evidence" / f"{tid}-integration.txt"
+        report = self.root / "evidence" / f"{tid}-integration.md"
+        evidence.parent.mkdir(parents=True, exist_ok=True)
+        evidence.write_text("check passed\n", encoding="utf-8")
+        report.write_text("# Integration evidence\nPass.\n", encoding="utf-8")
+        return {
+            "schema_version": 1,
+            "assignment_id": f"run:{tid}:integration",
+            "ticket_id": tid,
+            "stage": "integration",
+            "outcome": "integrated",
+            "source_identity": {
+                "repository": str(self.root.resolve()),
+                "checkout": str(self.root.resolve()),
+                "base_revision": "a" * 40,
+                "target_revision": "b" * 40,
+                "dirty_content_manifest": None,
+            },
+            "report_paths": [str(report.resolve())],
+            "checks": [{
+                "command": "verify exact integrated target",
+                "result": "pass",
+                "evidence_path": str(evidence.resolve()),
+                "explicit_skips": [],
+            }],
+            "cleanup": {"processes": "stopped", "resources": "released", "details": []},
+        }
 
     def test_dependency_waits_for_available_implementation(self):
         self.ticket("T-001", status="implemented", implementation_ref="commit:abc")
@@ -84,6 +114,38 @@ class TicketValidationTests(unittest.TestCase):
         self.reviewed_ticket(available=False)
         self.ticket("T-002", blocked_by=["T-001"])
         self.assertEqual(validate(self.root)["ready"], [])
+
+    def test_optional_integration_ref_must_resolve_when_present(self):
+        report = self.root / "integration" / "T-001.json"
+        report.parent.mkdir()
+        report.write_text(json.dumps(self.integration_manifest()) + "\n", encoding="utf-8")
+        self.reviewed_ticket(available=True, integration_ref=str(report.relative_to(self.root)))
+        self.assertEqual(validate(self.root)["errors"], [])
+
+        self.reviewed_ticket(status="in_review", available=True, integration_ref=str(report.relative_to(self.root)))
+        errors = validate(self.root)["errors"]
+        self.assertTrue(any("Only ready, available work" in error for error in errors), errors)
+        self.reviewed_ticket(available=True, integration_ref=str(report.relative_to(self.root)))
+
+        for invalid in ({}, {
+            "schema_version": 1,
+            "assignment_id": "run:T-001:integration",
+            "ticket_id": "T-001",
+            "stage": "integration",
+            "outcome": "integrated",
+            "source_identity": {},
+            "report_paths": [],
+            "checks": [],
+            "cleanup": {},
+        }):
+            with self.subTest(invalid=invalid):
+                report.write_text(json.dumps(invalid) + "\n", encoding="utf-8")
+                errors = validate(self.root)["errors"]
+                self.assertTrue(any("Invalid integration handoff" in error for error in errors), errors)
+
+        report.unlink()
+        errors = validate(self.root)["errors"]
+        self.assertTrue(any("Missing integration handoff" in error for error in errors), errors)
 
     def test_review_and_revision_do_not_unblock(self):
         for status in ("in_review", "revision_required"):
@@ -159,6 +221,69 @@ class TicketValidationTests(unittest.TestCase):
             with self.subTest(changes=changes):
                 self.ticket("T-001", **changes)
                 self.assertTrue(validate(self.root)["errors"])
+
+    def broad_ticket(self, **changes):
+        (self.root / "spec.md").write_text(
+            "# Spec\n" + "\n".join(
+                [f"REQ-{number:03d}" for number in range(1, 9)]
+                + [f"AC-{number:03d}" for number in range(1, 9)]
+            ),
+            encoding="utf-8",
+        )
+        self.ticket(
+            "T-001",
+            spec_refs=[
+                *[f"REQ-{number:03d}" for number in range(1, 9)],
+                *[f"AC-{number:03d}" for number in range(1, 9)],
+            ],
+            exclusive_resources=["schema", "publication", "api", "ui"],
+            **changes,
+        )
+        ticket = self.root / "T-001.md"
+        ticket.write_text(
+            ticket.read_text(encoding="utf-8")
+            + "\n".join(
+                f"- **T-001-AC-{number:02d}**: Observable behavior {number}."
+                for number in range(1, 6)
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    def test_many_criteria_and_contracts_prompt_scope_review_without_blocking(self):
+        # A single atomic behavior may have many invariants and shared boundaries.
+        # Counts alone must not make it unschedulable or demand artificial splits.
+        self.broad_ticket()
+        result = validate(self.root)
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["assignable_with_current_active_work"], ["T-001"])
+        self.assertIn("T-001", result["sizing_risks"])
+
+    def test_sizing_rationale_does_not_hide_scope_review_prompt(self):
+        self.broad_ticket(sizing_exception="Atomic transaction must preserve all invariants.")
+        result = validate(self.root)
+        self.assertEqual(result["errors"], [])
+        self.assertIn("T-001", result["sizing_risks"])
+
+    def test_completed_work_does_not_prompt_replanning(self):
+        self.broad_ticket(status="implemented", implementation_ref="commit:abc")
+        result = validate(self.root)
+        self.assertEqual(result["errors"], [])
+        self.assertEqual(result["sizing_risks"], {})
+
+    def test_legacy_broad_ticket_reports_risk_without_blocking(self):
+        self.broad_ticket()
+        ticket = self.root / "T-001.md"
+        ticket.write_text(
+            ticket.read_text(encoding="utf-8")
+            .replace("sizing_exception: null\n", ""),
+            encoding="utf-8",
+        )
+
+        result = validate(self.root)
+
+        self.assertEqual(result["errors"], [])
+        self.assertIn("T-001", result["sizing_risks"])
 
 
 class WorkflowMarkerTests(unittest.TestCase):

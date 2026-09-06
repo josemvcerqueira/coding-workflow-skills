@@ -7,63 +7,48 @@ disable-model-invocation: true
 
 # Review ticket
 
-Review one implemented ticket with at least two independent agents. Decide whether the ticket is ready or needs revision. Save evidence and update local ticket state. Code quality and correct behavior are separate requirements; neither can replace the other.
+Review one implemented ticket through an agent independent of implementation. Decide whether both quality/standards and specification/behavior pass, need revision, or are blocked. This completes one ticket slice, not the whole feature, integration, release, or deployment.
 
-The review agents propose improvements and diagnose defects. They do not edit production code, rewrite tests to pass, or change ticket state. The implementer makes accepted fixes in the next implementation pass. The parent agent coordinates the review and is the only writer of the review record, ticket, and index.
+Reviewer children are read-only and never change ticket state. A parent-authorized [bounded reviewer repair](references/reviewer-repair.md) is the only code-edit exception. The parent owns review records and review lifecycle/index updates, synchronized with coordinator-owned availability changes. Within `coordinate-work`, that coordinator is the parent; return control after this ticket.
 
-Within an explicit `coordinate-work` run, that coordinator acts as this skill's parent and launches the independent reviewers. Use the canonical ticket path and assigned code checkout. Do not create a second state-writing coordinator. After this one-ticket review ends, return control to the coordination loop; reviewer children still cannot dispatch more work.
+## Establish the target
 
-## Establish the review target
+When the coordinator supplies canonical paths, verify the supplied project, workflow, context, ticket, frozen checkout, resources, and handoff identities against the assignment; do not repeat registry discovery. Read the [external workspace contract](../setup-workflow/references/workspace.md) only for a standalone invocation or when supplied paths are absent or inconsistent. Use the exact parent-supplied [handoff manifest](../setup-workflow/references/handoff-manifest.md) path and follow the implementation manifest's recorded source and report paths. Read the ticket, implementation record, linked spec sections, applicable project instructions and context, and relevant standards. Read the [ticket format](../spec-to-tickets/references/ticket-format.md) before changing lifecycle state. Do not load the backlog or discovery transcript.
 
-Required reference: read this collection's [external workspace contract](../setup-workflow/references/workspace.md). Locate the installed setup-workflow companion if the sibling path is absent; do not install it silently. Resolve the selected project, external context, and active workflow from its registry and task identity. The user need not supply directory paths. Read the external CONTEXT.md and applicable repository instructions or user-maintained context. Keep their scopes explicit. Missing context alone does not block safe work; inaccessible required guidance needs its own blocker. Do not execute closing or completed workflows.
+Follow the [snapshot rules](references/snapshot.md). Resolve the repository, checkout, baseline, target, included paths, dirty-content identity when applicable, and spec digest. Do not review a changing target or revive a superseded ticket. Use `implemented` as the normal entry state; resume saved `in_review`. Before reopening `ready` or recording `revision_required`, check [availability invalidation](references/review-record.md#reopening-and-invalidation). When `available` is true or `integration_ref` is present, the coordinator clears both, preserving the former manifest as history; a standalone parent waits for that update. Already false/null fields need no coordinator wait unless ownership conflicts.
 
-Read the exact ticket, its implementation record, and the linked spec sections. Read applicable project instructions and relevant `CONTEXT.md`, `context.md`, context-map entries, and architecture decisions. Do not load all tickets or the discovery conversation. Inspect the index and prerequisite metadata only for lifecycle checks and dependency updates.
+For re-review, start from changed paths, prior finding IDs and dispositions, affected contracts, reusable evidence candidates, and cited report sections. Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) when choosing checks and carrying evidence across stages or rounds. Every reviewer independently validates reused evidence against source identity, environment, command, and covered contract.
 
-Read [the ticket format](../spec-to-tickets/references/ticket-format.md). This collection's format and validator are required companions. Locate the installed `spec-to-tickets` skill if the sibling path is absent. If it is unavailable, report the missing dependency before changing state. Read companion files directly as part of this explicit invocation; do not depend on implicit skill selection.
+Coordinate ownership with the assignment owner, preserve the implementation assignee, and set `in_review` before dispatch. Resolve ambiguous source, spec, or competing ownership before mutation; ask one focused question only if evidence cannot resolve a material decision.
 
-Use `implemented` as the normal entry state. Resume `in_review` from its saved record. A ticket in `revision_required` returns through implementation before another review. For an explicit re-review of a `ready` ticket, record why it is reopened and notify the assignment coordinator about affected consumers. Do not review an active implementer's changing checkout or revive a superseded ticket.
+## Choose coverage and dispatch
 
-Resolve the implementation location and exact baseline from evidence. Follow [snapshot rules](references/snapshot.md) before dispatch. If the source, spec, or comparison is materially ambiguous, research first. Ask one focused question only if it remains unresolved, with a recommended answer and its tradeoff.
+Read [reviewer briefs](references/reviewer-briefs.md). One reviewer with fresh focused context covers both axes by default and reports separate outcomes and evidence. The coordinator decides reviewer count; the implementer does not choose. Use two independent reviewers for concrete security, authentication, authorization, privacy, secret-handling, concurrency, distributed-state, durability, recovery, database or schema migration, destructive data, financial, trading, billing, money-movement, public-contract, compatibility, large cross-subsystem, disputed-finding, or explicit-policy risk. Add a second reviewer after the first only when its evidence creates material uncertainty. If a required second reviewer is unavailable, retain `in_review`; do not certify readiness.
 
-Coordinate a single writer with the assignment owner. If no other coordinator is active, this parent owns this ticket's review transition and index refresh. Record that ownership and the review target in the ticket. Set `in_review` before dispatch. Preserve the implementation assignee. File state is not an atomic lock; resolve competing ownership before writing.
+Give reviewers file pointers and the current delta, not conversations or copied reports. Include their brief, ticket and spec pointers, exact target, standards, permitted environment, output contract, dashboard state, and reserved resources. Reviewer children return structured axis reports and evidence to the parent. Only the parent writes the numbered report, ticket state, index, and review manifest. With two reviewers, preserve independent first inspection.
 
-## Dispatch two independent reviews
+Read [bounded reviewer repair](references/reviewer-repair.md) only before granting a review-stage edit. The rule must be explicit and unambiguous; the correction must be local, mechanical, leased, non-semantic, and proven by the smallest meaningful checks. It does not change production behavior or delete or weaken a test. Severity alone is not the gate. No second reviewer is needed solely because of a qualifying repair.
 
-Read [the reviewer briefs](references/reviewer-briefs.md). Start at least two distinct agents with fresh, focused contexts. Run them in parallel when tools and isolated test resources permit. Never ask the implementer to approve its own work. Do not substitute one agent role-playing two reviewers.
+Confirm implementers and mutating processes stopped. Read-only inspection can share the frozen checkout; concurrent mutable checks require isolated resources or sequence. The combined reviewer, or behavior reviewer in a two-reviewer run, owns application startup by default. Use only isolated local/test services and data. Never spend money, send real messages, use production credentials, or mutate external or production systems. Wait for all reviewers and owned processes to stop before returning the target to implementation or integration.
 
-Give each agent its role brief, ticket path, spec pointers, exact review target, relevant standards paths, skill paths, permitted test environment, and report requirements. Give file pointers and necessary facts, not the whole conversation or the other reviewer's conclusions. Keep initial findings independent.
+## Evaluate and decide
 
-- **Quality and standards:** inspect maintainability, language idioms, project rules, and design costs. Read relevant language or framework skills named by project context files. Distinguish required fixes from optional suggestions.
-- **Spec and behavior:** compare the slice with its requirements. Check integrations, error paths, regressions, and applicable security boundaries. Investigate suspected defects with evidence. Run the required working-path checks in a safe local test environment, including application startup when needed.
+Read every report and inspect its cited source, findings, checks, limitations, and cleanup. Both axes need explicit outcomes. A final message, majority vote, or one passing axis cannot replace evidence. Ask a reviewer to investigate unsupported claims or disagreements.
 
-Both agents may inspect related code as needed. Only the behavior reviewer owns application startup and mutable test fixtures by default. Give other checks separate resources or run them in sequence. No agent may mutate production services, real user data, or external systems merely to finish a review.
+Apply the [review record and decision rules](references/review-record.md). A blocking finding identifies a violated contract or demonstrated maintenance cost, location, evidence, consequence, and bounded correction. Complexity scores and smell thresholds are advisory; preference alone does not block. Confirmed behavior and safety defects do block.
 
-Within a coordinated run, the coordinator supplies and retains checkout and test-resource reservations. Confirm the implementer and its mutating processes stopped before review. Do not create or switch worktrees to bypass the assigned target. Read-only reviewers can share the frozen checkout, but concurrent checks need isolated mutable outputs and fixtures. Wait for both reviewers and their processes to stop, and reconcile cleanup, before returning that checkout to implementation or integration.
+Inspect any reviewer-repair delta and checks before accepting it. Outside the bounded reviewer repair, do not fix code during aggregation. Semantic changes, public contracts, behavior, expectations, assertions, uncertain moves, and adjacent cleanup return to the implementer.
 
-If the runtime cannot supply two independent agents, record the limitation. Do not certify readiness. No routine user sign-off is needed when both reviews and required checks succeed.
+Before deciding, confirm the reviewed source, spec, standards, and checks remain current. Changed inputs invalidate affected evidence.
 
-## Evaluate evidence and decide
+## Save the result
 
-Read both reports and verify the cited source, findings, and check evidence. Resolve duplicate findings without losing their axis or source. Ask the relevant reviewer to investigate unsupported claims or disagreements. Do not hide a failure behind the other axis's pass, majority voting, or a lower issue count.
+Write the next numbered report under `<workflow>/reviews/<ticket-id>/` and preserve earlier rounds. Include both axis outcomes, source identity, criterion evidence, checks and skips, findings and dispositions, repairs, cleanup, blockers, and next action. Write the handoff manifest atomically with the same exact evidence.
 
-Apply [the review record and decision rules](references/review-record.md). A finding must explain the actual defect or maintenance cost, its location, the violated contract or rule, and a bounded requested change. Personal preference alone does not block completion. A valid spec or safety defect blocks even if an existing style rule endorses the code.
+- Both axes and required checks pass with no blocking finding: set `ready`.
+- An accepted code or test correction remains: after confirming `available: false` and `integration_ref: null`, set `revision_required`.
+- Required evidence, access, reviewer, or decision is missing without a confirmed correction: retain `in_review` and record the resume condition.
 
-Before a final decision, confirm that the code snapshot, relevant spec, and required checks still match the reviewed versions. A changed target invalidates the affected evidence. Do not apply fixes during aggregation. Return code defects to the implementer; return unresolved product-contract conflicts to the user with one recommendation.
+Leave `available` and `integration_ref` to the coordinator; availability alone is not integration evidence. Run the ticket validator and refresh the derived index. Preserve tickets, dependency edges, and prior evidence. Report reopened prerequisite impacts rather than rewriting another assignment.
 
-## Save the handoff
-
-Write a numbered Markdown report under `<workflow>/reviews/<ticket-id>/`, outside the ticket and product directories. Preserve earlier rounds. Link it from `review_ref` and the ticket's Review record. Include both axis outcomes, check evidence, open findings, and the next action.
-
-- Both axes pass and required checks pass: set `ready`. This completes the ticket's slice, not the whole feature, a merge, or a release.
-- Accepted blocking code or test findings: set `revision_required` and `available: false`. Give the implementer the ticket and report paths, with stable finding IDs and expected verification.
-- Required evidence or access is missing: retain `in_review`, record the blocked check and resumption action, and report not ready. Do not invent a code revision merely because a test service is unavailable.
-
-Do not delete or move completed ticket files. Keep dependency edges. Remove ready tickets from open-work lists, but retain their index rows and history. Verify availability in the consumers' agreed base separately from review success; do not mark `available: true` merely because a branch exists.
-
-Run `python3 <spec-to-tickets-directory>/scripts/validate_tickets.py <ticket-directory>`, then refresh the index from current metadata. The script checks structure, not the truth of review evidence. Resolve errors before reporting new assignment candidates. A dependent can start only after all prerequisites are `ready` and available, with no external or resource blockers.
-
-Report reopened-prerequisite impacts to the assignment coordinator and pause affected consumers through that owner. Do not erase dependency edges or rewrite another agent's assignment to make validation pass. Do not merge code to establish availability without authority.
-
-Return the ticket path, ready/not-ready outcome, the two review outcomes, report path, and newly assignable candidates or blockers. Stop after this ticket. Hand off the next candidate; do not automatically implement or dispatch it, commit, push, or deploy.
-
-Use short sentences, active voice, and consistent technical terms based on STE principles. Do not claim formal ASD-STE100 compliance.
+Return the ticket path, ready/not-ready result, both axis outcomes, reviewer count and escalation reason, report and handoff paths, and newly assignable candidates or blockers. Stop after this ticket. Do not implement, dispatch another ticket, commit, push, merge, or deploy.

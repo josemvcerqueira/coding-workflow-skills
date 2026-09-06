@@ -14,7 +14,7 @@ Read the workspace contract, WORKFLOW.md, RUN.md, ticket state, and final verifi
 - All workers, reviewers, verifier processes, and other consumers of this spec have stopped. No active workflow depends on the live spec; resolve such a dependency first.
 - Required cleanup is confirmed, or retention of specific safe resources is explicitly authorized. Preserve implementation worktrees until their code and evidence are safely retained under their separate policy.
 
-Failed, blocked, paused, draining, uncertain, or merely implemented work never qualifies. A changed target requires renewed review/verification as appropriate. Do not delete a spec to hide a failed check or make a task appear done.
+Failed, blocked, paused, draining, uncertain, or merely implemented work never qualifies. For a changed target, apply the [check-scope policy](check-scope.md): require a current verification report with fresh affected checks and justified carried evidence for unaffected criteria. Reusing evidence does not mean reusing an old verdict or leaving a failed criterion unresolved. Do not delete a spec to hide a failed check or make a task appear done.
 
 ## Record intent before deletion
 
@@ -28,7 +28,7 @@ Before deletion, update INDEX.md under its metadata lock: move the active entry 
 
 Once all listed specs are absent, write COMPLETED.md with the completion date, project/workflow ID, final code identity, verification report path, deleted spec paths/digests, retained evidence locations, and cleanup result. It contains no replacement specification. Mark WORKFLOW.md completed and RUN.md complete. Update the project index under its metadata lock. Remove only confirmed released claims from the reservation table; preserve authorized retained resources with their owner and release conditions. Keep CLOSING.md as the deletion journal; COMPLETED.md identifies successful closure. A marker alone is not proof that these gates passed.
 
-Replace the recovery-list entry with the completion receipt only after successful closure. Mark the retained discovery, ticket index, and RUN.md as closed execution records. Their prior spec paths and requirement IDs are historical identifiers whose source was intentionally deleted, not live links to recover or instructions to execute. Reports retain actual observations, not a reconstructed full spec. Do not rewrite old review verdicts to claim they describe later code.
+Replace the recovery-list entry with the completion receipt only after successful closure. Mark the retained discovery, ticket index, RUN.md, reports, and pause checkpoints as closed execution records. Pause checkpoints retain identities and artifact pointers, not replacement specification contents. Their prior spec paths and requirement IDs are historical identifiers whose source was intentionally deleted, not live links to recover or instructions to execute. Reports retain actual observations, not a reconstructed full spec. Do not rewrite old review verdicts to claim they describe later code.
 
 The active ticket validator intentionally rejects closing/completed sets instead of bypassing its missing-spec checks. Validate tickets before closure. After closure, check the receipt, deletion journal, absence of all listed files, and exclusion from active discovery; do not recreate the spec to make active validation pass. A later defect starts a new workflow from current code and user intent, with relevant old failure evidence read only when useful.
 

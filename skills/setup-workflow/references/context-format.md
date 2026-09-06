@@ -15,6 +15,8 @@ For each discovered useful command, record:
 - Required tools, test resources, and service or external side effects.
 - Evidence status: inspected, not run; or a pointer to actual prior execution evidence with its limits.
 
+Where known, include focused test selectors, checks mandated by project policy, shared-resource or concurrency limits, and measured durations with their evidence source. Mark unknown costs as unknown. Later stages use this map to avoid assigning expensive whole-project checks to every small revision; setup still does not run them.
+
 Separate implementation-safe checks from checks that start an application or require live services. Missing commands remain unknown. A familiar command name is not evidence of safe behavior or successful tests. Do not claim existing evidence is fresh without checking its target.
 
 For later feature verification, include discovered startup/build sources, readiness probes, test configuration variable names, service/storage requirements, and owned-resource cleanup commands. Identify production-bound defaults or shared resources that need isolation. Inspect these sources only during setup; the verifier checks their current safety and executes them later. Put feature-specific scenarios and expected behavior in the engineering spec, not in this project map.
