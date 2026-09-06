@@ -1,0 +1,6 @@
+interface:
+  display_name: "Backend Architecture"
+  short_description: "Design backend systems with explicit tradeoffs"
+  default_prompt: "Use $backend-architecture to recommend a backend design with clear contracts, caching and performance choices, tradeoffs, and verification criteria."
+policy:
+  allow_implicit_invocation: false

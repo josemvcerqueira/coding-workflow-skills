@@ -1,0 +1,7 @@
+interface:
+  display_name: "Shape the Idea"
+  short_description: "Define an idea through questions and tradeoffs"
+  default_prompt: "Use $shape-the-idea to develop my feature idea into an agreed discovery brief, asking one decision at a time."
+
+policy:
+  allow_implicit_invocation: false

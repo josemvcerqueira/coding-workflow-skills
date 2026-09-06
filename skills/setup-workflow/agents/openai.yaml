@@ -1,0 +1,6 @@
+interface:
+  display_name: "Set Up Workflow"
+  short_description: "Set up external workflow records and project context"
+  default_prompt: "Use $setup-workflow to prepare this project's external workflow workspace, discover its context and standards, and register paths for later agents without installing skills or starting the application."
+policy:
+  allow_implicit_invocation: false

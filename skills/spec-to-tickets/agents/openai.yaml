@@ -1,0 +1,7 @@
+interface:
+  display_name: "Spec to Tickets"
+  short_description: "Create linked local tickets as vertical slices"
+  default_prompt: "Use $spec-to-tickets to turn the engineering spec I provide into local Markdown tickets for one implementation agent per ticket."
+
+policy:
+  allow_implicit_invocation: false

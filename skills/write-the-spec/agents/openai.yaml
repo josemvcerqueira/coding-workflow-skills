@@ -1,0 +1,7 @@
+interface:
+  display_name: "Write the Spec"
+  short_description: "Turn a discovery brief into an engineering spec"
+  default_prompt: "Use $write-the-spec to turn the discovery brief I provide into a precise engineering specification saved as Markdown."
+
+policy:
+  allow_implicit_invocation: false

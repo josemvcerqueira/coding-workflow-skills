@@ -1,0 +1,6 @@
+interface:
+  display_name: "TDD"
+  short_description: "Write meaningful tests during implementation"
+  default_prompt: "Use $tdd to implement the requested behavior test-first, with observed failing and passing tests and no review or application startup."
+policy:
+  allow_implicit_invocation: false

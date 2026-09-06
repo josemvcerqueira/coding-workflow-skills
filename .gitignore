@@ -1,0 +1,11 @@
+# Local agent state and disposable worktrees
+.claude/worktrees/
+.superpowers/
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+
+# Editor and OS files
+.DS_Store
+*.swp

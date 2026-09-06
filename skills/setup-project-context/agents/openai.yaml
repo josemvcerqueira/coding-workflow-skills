@@ -1,0 +1,6 @@
+interface:
+  display_name: "Set Up Project Context"
+  short_description: "Compatibility entrypoint for external workflow setup"
+  default_prompt: "Use $setup-project-context to prepare this project through the setup-workflow companion, with external workflow records and an evidence-based context map."
+policy:
+  allow_implicit_invocation: false

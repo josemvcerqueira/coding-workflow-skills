@@ -1,0 +1,7 @@
+interface:
+  display_name: "Make It Clear"
+  short_description: "Clarify concepts, decisions, and task progress"
+  default_prompt: "Use $make-it-clear to explain the confusing part of our conversation with enough context and a concrete example when helpful."
+
+policy:
+  allow_implicit_invocation: false

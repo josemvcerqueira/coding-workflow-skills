@@ -1,0 +1,95 @@
+# Workspaces, capacity, and scheduling
+
+## Preserve one source of ticket state
+
+Send workers the absolute canonical ticket path and their separate code checkout path. Resolve ticket links relative to the canonical ticket file, not the worker's current directory. Worktree copies of tickets and `INDEX.md` are not independent trackers. If a worker cannot access the canonical files, establish a single-writer handoff transport before dispatch; do not let copied trackers diverge.
+
+## Workspace policy
+
+Reuse the project's established workspace policy and user-selected checkout. Inspect status and existing changes before dispatch.
+
+**Default: serial use of the supplied checkout.** Allow one implementation writer, then freeze that checkout for review. After review, its code is already present for a later ticket using that checkout. No commit is needed to record an uncommitted snapshot. Preserve unrelated user edits and establish a reproducible baseline for each ticket, so the next diff does not attribute earlier work to the new ticket.
+
+The only same-checkout exception is a registered intra-ticket delegation group. It does not make the checkout generally shared or available to another ticket. Apply the group rules below before dispatching a child; otherwise retain one implementation writer and the normal review freeze.
+
+**Parallel use:** the coordinator creates or assigns one exclusive Git worktree per concurrent implementation agent before dispatch. Reuse an existing worktree only after verifying its ownership, contents, and base. Being in a linked worktree does not make it free for a second writer. For a non-Git project, require an established equivalent isolation method; otherwise run serially. Never fall back to concurrent writes in the supplied checkout when worktree creation fails.
+
+Before allocation, inspect `git worktree list --porcelain`, each candidate's repository root, status, branch or detached state, and resolved base revision. Resolve physical paths so aliases do not count as different checkouts. Check the run journal and actual runtime ownership, including workers outside this run. Use an established workspace claim mechanism when present. A RUN.md entry or Git worktree lock alone does not prevent another agent from writing. Unknown ownership blocks reuse.
+
+Prefer native workspace tools that preserve the current task and assignment model. Otherwise use Git's worktree commands. Use the registered external workspace's `worktrees/<assignment-id>/` location, or the host's established external worktree location recorded in RUN.md. Do not put generated workflow records or new worktrees inside the product source tree. Do not create user-owned conversations, commit ignore-file changes, force an occupied branch, or reset an existing branch to allocate a workspace. Select a unique assignment branch or a recorded detached base. Inspect applicable setup hooks before creating or preparing the workspace; allocation does not authorize application startup or unrelated installation.
+
+Record allocation intent with the assignment, intended path, and base before creation. Confirm the actual worktree identity and contents before dispatch. If creation fails or its outcome is unknown, inspect the intended path and worktree inventory before retrying; preserve partial state and do not allocate a duplicate blindly.
+
+Start from an exact verified base containing the prerequisites. A worktree from HEAD does not include uncommitted prerequisite changes. Do not silently discard, stash, reset, commit, or copy over user work to construct a base. If the required base cannot be prepared within current authority, use safe serial work when it meets the request, or report the specific blocker.
+
+Before parallel dispatch, record how each result will reach the agreed consumer base. If no integration method is authorized, use serial work in the supplied checkout when it can meet the request. Do not move an explicitly chosen consumer base to another branch just to avoid an integration blocker. If the requested workflow requires integration authority, explain the exact proposed action and wait for direction.
+
+If the user authorizes integration, record its target and permitted operations. Integrate only identified reviewed changes within that authority. Reserve the destination and serialize integration into it. Do not integrate, rebase, or change the base of a checkout used by an active or uncertain implementer, reviewer, or verifier. Conflicts or combined behavioral changes go back to an assigned implementer; the coordinator does not invent a fix during a merge. Recheck affected tests and review evidence on changed results before treating them as ready. Never equate a clean merge with verified behavior.
+
+## Test resources and ownership transfer
+
+A lack of dependency edges does not make parallel execution safe. Before dispatch, inspect command/configuration sources for mutable resources beyond the checkout: build outputs, temporary directories, ports, databases, queues, Docker volumes and bind mounts, and external test accounts. Resolve effective paths and identities, not just labels. Two Compose project names do not isolate an explicitly shared volume or host directory. Shared repository configuration and refs also need coordination; worktrees do not isolate them.
+
+Record each reservation in RUN.md: resource identity and host, owning assignment, permitted use, isolation settings, current state, and release condition. Supply supported per-assignment test settings and output paths to workers. Keep credentials out of the record. Use the project registry/index's state-independent reservation table to discover claims from active, closing, and completed workflows with retained resources. Under the short project metadata lock, recheck conflicts and record each new claim before allocation or dispatch; release the lock before slow operations. Keep uncertain claims and incomplete metadata updates visible. Workflow completion does not release a resource. Check conflicts with all active or uncertain implementation, review, and verification runs, not just this ticket set. Resources proven read-only or safe for concurrent use can be shared. Isolate mutable resources; if isolation is unavailable, reduce concurrency before dispatch. Do not weaken tests or change product behavior to create apparent isolation.
+
+An implementer owns code writes only in its assigned checkout and its permitted canonical ticket fields. It uses the reserved resources and reports unexpected conflicts to the coordinator. The coordinator confirms the writer and its mutating child processes stopped before freezing the target for review. Both reviewers may read that same stable checkout; separate worktrees are not required for read-only inspection. Give concurrent checks isolated mutable resources, or run those checks in sequence. The behavior reviewer owns application startup by default. Resource reservations never override a stage's execution limits.
+
+Keep the checkout reserved until all reviewer processes have stopped and cleanup is confirmed. For a revision, reuse the same worktree and preserved edits when valid. A replacement checkout or base requires a new recorded assignment attempt and verified handoff; workers must not relocate themselves. Unknown liveness retains reservations. A final message or elapsed time alone does not release them.
+
+Retain worktrees by default through review, revisions, and integration handoff. Only the coordinator or established workspace owner may retire them under the agreed cleanup policy. Confirm all users stopped, code and evidence are retained, and canonical references remain valid. Never force-remove dirty worktrees, delete the sole implementation copy, or run broad pruning as routine cleanup. Record retained resources and unresolved cleanup on pause or completion.
+
+Git mechanics reference: [git-worktree](https://git-scm.com/docs/git-worktree). Project authority and the stage limits above still govern their use.
+
+## Intra-ticket delegation groups
+
+One implementation assignment remains the ticket owner. When it has eligible independent packages, the coordinator grants that owner the largest safe positive `child_capacity` after reserving actual runtime slots, counting the coordinator plus every currently active or uncertain implementer, child, reviewer, and verifier, and proving that the group's mutable resources can be isolated. Do not hold future review slots idle while an isolated implementation group can use them; drain the whole group before review and then reuse the released slots for the required reviewers. `child_capacity` is a coordinator-owned ceiling, not an entitlement: the owner cannot create capacity, borrow a slot from another assignment, or continue using a revoked allowance. It stays zero when independence, isolation, or capacity is unavailable. Count running and uncertain children against total runtime capacity and the registered child allowance. They count against an explicit implementation-agent limit when the user defined that limit to cover all implementation runtimes; otherwise the default one-at-a-time rule limits ticket owners, not registered children.
+
+Allow children only for work that is independent at an observable behavior or established interface-contract boundary. Different paths, modules, or test names alone do not establish independence. Do not delegate work that needs concurrent changes to a shared schema, public contract, generated repository-wide output, ticket state, dependency graph, or the same behavior under test.
+
+Before dispatch, the coordinator records a delegation-group entry in `RUN.md`, reserves its capacity, and gives the owner the permitted dispatch-handoff transport. The owner supplies the work details through that transport. Record the parent assignment and runtime identity, ticket, checkout identity and base, every child ID and goal, expected child handoff, exact leased paths, preserved interface contract, isolated mutable test/output resources, runtime-slot reservation, and parent/child agent paths. Leases must be exact and pairwise non-overlapping after resolving physical paths; a directory lease includes all descendants. Resource reservations remain in the `RUN.md` reservation map and child handoff. Require each child to use the dashboard-compatible progress record with its recorded ancestry, ticket, role, stage, state, summary, timestamps, next action, and applicable file lease.
+
+After the coordinator grants and registers the group, the ticket owner may dispatch children directly within the recorded `child_capacity`; it does not need a separate coordinator dispatch for each child. Before the runtime call, the owner records dispatch intent through the permitted handoff transport. Immediately after it returns, the owner records the actual result there, including a runtime ID when returned or an unknown outcome when it is not. The coordinator records that intent/result and observes liveness in `RUN.md`. The owner must not exceed the grant or dispatch a child with unregistered leases, contract, or resources.
+
+Children in a group may use the owner's checkout only under that registration. Each child writes only its leased paths and assigned scratch/output locations. It must not commit, switch branch, rebase, merge, reset, stash, alter refs or worktrees, or otherwise change Git state. It must not write ticket files, `RUN.md`, lifecycle fields, dependencies, shared schemas, or repository-wide generated output. The parent must not write a child's leased paths while that child is running or uncertain. Each child uses only its own reserved mutable test resources and output paths. The parent uses a distinct reservation or waits for sequenced access; it never uses a child's reservation concurrently. Run checks sequentially whenever their effective resources overlap. The parent remains the sole ticket-lifecycle and final-implementation-record writer.
+
+Children cannot spawn children. A child runs its local TDD cycles inside its leased behavior boundary and returns red/green evidence, changed paths, checks, cleanup state, blockers, and its handoff through its registered records. The parent does not integrate opportunistically: after all children are confirmed stopped, it inspects every handoff, resolves the work within its own authority, and runs cross-boundary plus required implementation checks. The coordinator freezes the checkout for review only after every group member and every mutating child process has stopped and cleanup is confirmed. Unknown liveness retains the slot, lease, checkout exclusion, and resource reservation; it is not a clean handoff or reviewable target.
+
+On a discovered lease, contract, output, or resource overlap, stop affected writes, ask those children to checkpoint, and preserve their edits and evidence. Do not resolve the overlap by silently editing another lease or relaxing a test. The coordinator records the incident, reconciles liveness and physical resources, then either reschedules with new disjoint registration or reduces work to the parent/serial execution. If the coordinator revokes a child's allowance, request that child to checkpoint and stop; retain its slot, lease, checkout exclusion, and resource reservation until stop and cleanup are confirmed. For a failed or unknown child dispatch, apply the run-state dispatch and recovery rules before retrying; never assume that a missing response released its lease.
+
+At 160,000 through 199,999 exact latest-call input tokens, the parent checkpoints its location, checks, blockers, next action, and group state, then asks the coordinator to preserve, reduce, or revoke `child_capacity`. At 200,000 or above, the parent stops broad work and the coordinator requests active children to checkpoint, then drains or reconciles their group before fresh-context continuation. Confirm the old parent stopped before assigning a replacement owner. Before that replacement writes, re-register every continuing child's ancestry, lease, resource reservation, and liveness under it; never leave two live ticket owners. No new child is dispatched as a workaround. Apply the same checkpoint-and-reconcile rule when a child's exact telemetry is critical. These thresholds use exact latest-call input only, never cumulative usage; unavailable telemetry is reported as unavailable, not estimated.
+
+## Availability
+
+`ready` establishes review completion. `available` records access in the agreed consumer base. They are independent.
+
+Before starting a dependent, verify its actual checkout contains the exact required implementation and compatible prerequisites. For committed work, inspect revision relationships and any intervening changes. For dirty work, compare the recorded paths and content identity and inspect changes that can affect the required contract. File presence alone is insufficient.
+
+A single availability flag cannot describe every checkout. Use it for the documented agreed base, record per-consumer evidence in `RUN.md`, and check each actual assignment. If that base or producer implementation changes, invalidate stale availability evidence before scheduling. Code on an inaccessible branch remains unavailable, even after review passes.
+
+Shared serial work can change an earlier ticket's code. Check impacts on earlier acceptance criteria and downstream dependencies. Reopen affected review evidence when required; do not preserve a ready claim for an invalidated implementation. Full feature verification remains separate from per-ticket checks.
+
+## Capacity and selection
+
+Use actual runtime capacity. Count active and uncertain implementation assignments against the user's implementation limit. Count reviewers and the coordinator against the runtime's total limit. User permission for two implementers does not imply room for two implementers plus two reviewers.
+
+An active or uncertain final verifier also consumes runtime capacity and reserves its combined code target and mutable test resources. Do not dispatch a writer or conflicting test run into that reservation. Use the same dispatch recovery rules without changing a ticket's assignee for verification.
+
+The coordinator also acts as the review parent. When review begins, reserve space for two independent reviewer roles. If capacity is tight, let current implementers finish and release their slots before review; do not keep future reviewer slots idle during safely isolated implementation. When the runtime permits two distinct reviewers only in sequence, follow review-ticket's independence and stable-target rules; do not simulate the missing role. Tool failure is not a reason to relax the two-reviewer requirement.
+
+Select pending tickets from validated candidates. For revision_required or confirmed stopped in_progress work, explicitly recheck prerequisites, external blockers, checkout ownership, and pairwise resources; the validator's pending-only candidate list does not schedule them automatically.
+
+Record selection before dispatch. Re-read the target ticket and relevant prerequisite state to detect concurrent edits. Do not claim multiple tickets from an old index snapshot. A confirmed resource conflict is a blocker even if the validator's labels missed it.
+
+Use runtime event waits when there is no useful local coordination work. A slow worker may be making progress. Inspect evidence before interrupting; do not launch a second worker because the first exceeded an invented time estimate. When a tool failure repeats without changed conditions, save the blocker instead of busy polling.
+
+## Handoff shape
+
+Include PROJECT.md, WORKFLOW.md, the external context path, and the separate code root with every assignment. Canonical ticket and report paths remain in the external workspace; do not recreate them in a worktree.
+
+Implementation assignment:
+
+> Use the implement-ticket skill at <resolved-skill-path> and its TDD companion at <resolved-path>. Implement only <canonical-ticket-path> in <assigned-code-checkout>, from <verified-base>, with <recorded-branch-or-detached-state>. Your assignment ID is <id>, already recorded in assignee. Use <reserved-test-resources-and-output-paths> under <relevant project constraints>. Verify the assignment before edits. Do not create another worktree or switch branches; report any mismatch. Update only this ticket's permitted implementation fields. Return implementation location, checks, blockers, and resource/process state; do not start review or another ticket.
+
+For a revision, add the exact report path and required finding IDs. Do not paste the entire prior conversation. For review, use review-ticket's role briefs and report contracts, with a stable code target and canonical ticket path.
+
+Maintain minimal coordinator context: policy, mappings, dependency facts, findings that need a decision, and artifact pointers. Save a checkpoint before context becomes too large. A new coordinator resumes from those files plus actual runtime state, not a large transcript.
