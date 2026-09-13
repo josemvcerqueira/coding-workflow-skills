@@ -18,6 +18,29 @@ Broaden checks for a changed shared interface, dependency, runtime configuration
 
 Use assigned absolute workflow/output paths, separate from the code checkout. Before a harness starts, verify each pin against its named input: spec digest against the spec, source-manifest digest against that manifest, and candidate identity against the code. Report the mismatched input; do not weaken a pin to make startup pass.
 
+Before an expensive application or service run allocates resources, close readiness for the exact
+target and harness identity with one collect-all gate. Continue every independently safe readiness
+check after another fails and retain one report containing all discovered failures; dependency-blocked
+checks remain unrun. A failed gate proves that it created no process, container, network, volume,
+mutable data path, or browser profile and cannot fall through to a startup timeout.
+
+For a reusable runtime harness, readiness closes four boundaries:
+
+- every required runtime artifact, image, executable, and dependency is present by exact identity or
+  has one explicit acquisition/build owner;
+- every build context, configuration path, working directory, and required input resolves from
+  explicit permitted roots rather than the caller's current directory;
+- the code and configuration under test are protected by exclusive writer ownership or an immutable
+  content-addressed snapshot, with identity checked again before publishing acceptance;
+- the real failure-publication and cleanup path has deterministic fault-injection proof that status,
+  logs, exit code, timings, and cleanup evidence survive a failed run.
+
+Run host-dependent artifact and path checks for each resolved run. Run deterministic failure-path
+tests when the harness or publication path changes and bind their result to that harness identity;
+do not inject a deliberate failure into every product run. A harness correction is not ready for
+another expensive attempt until focused regressions force each defect, a combined regression proves
+the collect-all result, and any required independent review passes.
+
 For background execution, retain the tool's task/session handle and consume its terminal result. If no handle exists, track the launched child PID plus start identity and capture its exit status. Never infer liveness from `pgrep -f` or script-name matches: the polling shell can match itself. Logging wrappers must propagate the check's exit code. Await terminal results before handoff; compaction or a worker turn ending is not command completion.
 
 Give each setup/check attempt a distinct evidence path with its command, input identities and result. Preserve failed logs before correcting a harness. After a setup failure, reconcile owned resources and unchanged source, apply only coordinator changes acknowledged under [live instruction delivery](../../coordinate-work/references/run-state.md#live-instruction-delivery), and retry only the affected setup/check after a diagnosed condition changes. Keep the current assignment and valid evidence.
