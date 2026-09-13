@@ -17,7 +17,7 @@
 - Modify: `apps/workflow-dashboard/workflow_dashboard.py`
 - Modify: `apps/workflow-dashboard/cli.ts`
 - Modify: `apps/workflow-dashboard/README.md`
-- Modify: `skills/coordinate-work/references/dashboard.md`
+- Modify: `skills/thin-coordinator/references/dashboard.md`
 
 **Step 1: Write the failing progress-contract tests**
 
@@ -140,7 +140,7 @@ Expected: PASS.
 
 **Files:**
 - Verify: `apps/workflow-dashboard/**`
-- Verify: `skills/coordinate-work/references/dashboard.md`
+- Verify: `skills/thin-coordinator/references/dashboard.md`
 
 **Step 1: Run the full dashboard suite**
 
@@ -164,6 +164,6 @@ Inspect the existing live process only through read-only requests if needed. Rep
 
 **Step 5: Review the final diff**
 
-Run: `git diff -- apps/workflow-dashboard skills/coordinate-work/references/dashboard.md docs/superpowers/plans/2026-09-06-workflow-dashboard-outcomes-health.md`
+Run: `git diff -- apps/workflow-dashboard skills/thin-coordinator/references/dashboard.md docs/superpowers/plans/2026-09-06-workflow-dashboard-outcomes-health.md`
 
 Expected: only scoped dashboard/coordinator documentation changes, with no transcript content or unrelated user work included.

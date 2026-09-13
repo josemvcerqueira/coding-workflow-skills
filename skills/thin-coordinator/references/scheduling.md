@@ -26,15 +26,53 @@ Before parallel dispatch, record how each result will reach the selected local c
 
 Record the integration target and permitted local operations. Integrate only identified reviewed changes within the standing authority. Reserve the destination and serialize integration into it. Do not integrate, rebase, or change the base of a checkout used by an active or uncertain implementer, reviewer, or verifier. Conflicts or combined behavioral changes go back to an assigned implementer; the coordinator does not invent a fix during a merge. Recheck affected tests and review evidence on changed results before treating them as ready. Write the allocated integration `handoff.json` with the exact destination identity, reports, checks, skips, and cleanup; then set the ticket's relative `integration_ref` to it. Availability alone and a clean merge do not prove integration or verified behavior.
 
+## Component lane batches
+
+A lane is a reserved checkout plus its dependency cache and mutable test-resource plan. Pack small
+ready tickets into one serial lane when they share the same component and setup, their combined
+review surface remains bounded, and no ticket needs a conflicting base, schema, public contract, or
+resource owner. This reuses preparation; it does not merge ticket identity.
+
+Record the ordered batch and a separate baseline, assignment, checks, implementation handoff, and
+lifecycle outcome for every ticket. Exactly one writer works in the lane at a time. Finish and verify
+one ticket handoff before assigning the next through an acknowledged follow-up. End the batch when a
+ticket reveals unexpected coupling, invalidates an earlier baseline, expands risk, or makes the
+combined review surface unclear. Preserve per-ticket review and integration evidence even when later
+tickets reuse the same checkout and warmed dependencies.
+
 ## Test resources and ownership transfer
 
 A lack of dependency edges does not make parallel execution safe. Before dispatch, inspect command/configuration sources for mutable resources beyond the checkout: build outputs, temporary directories, ports, databases, queues, Docker volumes and bind mounts, external test accounts, and expensive test-suite capacity. Treat broad race suites, full repository checks, and other CPU-, memory-, I/O-, or timing-intensive commands as named test lanes with an owner and concurrency policy even when they use no fixed port or database. Resolve effective paths and identities, not just labels. Two Compose project names do not isolate an explicitly shared volume or host directory. Shared repository configuration and refs also need coordination; worktrees do not isolate them.
 
 Record each reservation in RUN.md: resource or test-lane identity and host, owning assignment, permitted use, isolation or concurrency settings, current state, and release condition. Supply supported per-assignment test settings and output paths to workers. Keep credentials out of the record. Use the project registry/index's state-independent reservation table to discover claims from active, closing, and completed workflows with retained resources. Under the short project metadata lock, recheck conflicts and record each new claim before allocation or dispatch; release the lock before slow operations. Keep uncertain claims and incomplete metadata updates visible. Workflow completion does not release a resource. Check conflicts with all active or uncertain implementation, review, and verification runs, not just this ticket set. Resources proven read-only or safe for concurrent use can be shared. Isolate mutable resources; if isolation is unavailable, reduce concurrency before dispatch. Do not weaken tests or change product behavior to create apparent isolation.
 
+### Content-addressed database snapshots
+
+When repeated lanes spend material time applying the same migrations and deterministic seed, use one
+pre-seeded database snapshot as a read-only cache. A single builder publishes it atomically only after
+schema and restore checks pass. Its identity binds the database engine and major version, migrations,
+schema, seed generator and inputs, preparation steps, and required row/cardinality checks. Any change
+to those inputs invalidates the snapshot.
+
+Each lane restores or copy-on-write clones that snapshot into a new run-owned database. No lane writes
+the shared artifact or treats a shared running database as a snapshot. Record snapshot and clone
+identities, creation/restore timings, owner, and cleanup separately. Never create it from production or
+personal data, retain secrets in it, silently repair it during consumption, or use it when project
+rules require a cold migration path. One designated schema or harness assignment owns regeneration;
+consumers report a mismatch and fall back only to an authorized deterministic build path.
+
 When broad race or full suites overlap and expose a failure, retain the exact commands, timing, environment and dependency identities, logs, and competing suites before changing execution. Investigate under the original concurrent conditions. A later serial pass does not erase the concurrent failure; it supplies another observation. Classify the event as a product race, test synchronization defect, resource collision, or unrelated pre-existing failure only from evidence. Reserve serial execution after that investigation when shared capacity is the cause, while keeping meaningful concurrency regression coverage.
 
 An implementer owns code writes only in its assigned checkout and its permitted canonical ticket fields. It uses the reserved resources and reports unexpected conflicts to the coordinator. The coordinator confirms the writer and its mutating child processes stopped before freezing the target for review. One reviewer covers both axes by default. When risk requires two reviewers, both may read that same stable checkout; separate worktrees are not required for read-only inspection. A bounded reviewer repair is the sole review-stage write exception: the coordinator grants its exact temporary lease only after every required reviewer finishes independent first inspection, and no other writer may overlap it. Give concurrent checks isolated mutable resources, or run those checks in sequence. The single combined reviewer, or the behavior reviewer in a two-reviewer assignment, owns application startup by default. Resource reservations never override a stage's execution limits.
+
+For a small ticket, keep review in the same lane after the implementer and every mutating child stop.
+Freeze the source, preserve valid build artifacts and the lane's run-owned database clone, then launch
+the reviewer with a fresh focused context containing pointers and the current delta rather than the
+implementation transcript. Independence comes from the new reviewer context and read-only first
+inspection, not from rebuilding an identical stack in another worktree. Transfer each mutable
+resource explicitly, verify its identity and clean state, and give the reviewer sole ownership before
+reuse. Use a separate lane when source cannot be frozen, resource state is uncertain, project policy
+requires a cold run, or the ticket's risk requires stronger physical isolation.
 
 Keep the checkout reserved until all reviewer processes have stopped and cleanup is confirmed. For a revision, reuse the same worktree and preserved edits when valid. A replacement checkout or base requires a new recorded assignment attempt and verified handoff; workers must not relocate themselves. Unknown liveness retains reservations. A final message or elapsed time alone does not release them.
 
@@ -86,7 +124,7 @@ An active or uncertain final verifier also consumes runtime capacity and reserve
 
 The coordinator also acts as the review parent. Reserve one reviewer slot by default, and require that reviewer to cover both axes. The coordinator decides and records whether security, concurrency, migration, financial, public contract, large cross-subsystem, uncertainty, or explicit-policy risk requires two independent reviewers; the implementer does not choose. If capacity is tight, let current implementers finish and release their slots before a required review; do not keep future reviewer slots idle during safely isolated implementation. When two reviewers are required but the runtime permits them only in sequence, follow review-ticket's independence and stable-target rules. Tool failure is not a reason to relax a risk-triggered two-reviewer requirement.
 
-Select pending tickets from validated candidates. Prefer a small ready slice that releases blocked consumers, then a revision that can close cheaply, while aging independent work to avoid starvation. Compare expected implementation, check, review, and integration effort with the dispatch overhead; parallelize only when ownership, capacity, and resources make a useful overlap possible. For revision_required or confirmed stopped in_progress work, explicitly recheck prerequisites, external blockers, checkout ownership, and pairwise resources; the validator's pending-only candidate list does not schedule them automatically.
+Select pending tickets from validated candidates. Prefer the smallest action on the measured release critical path: reviewed work awaiting integration, a revision that can close cheaply, or a ready slice that releases blocked consumers. Pack compatible small tickets into an existing component lane before paying for another setup, while aging independent work to avoid starvation. Compare expected implementation, check, review, and integration effort with dispatch overhead; parallelize only when ownership, capacity, and resources create useful overlap. For revision_required or confirmed stopped in_progress work, explicitly recheck prerequisites, external blockers, checkout ownership, and pairwise resources; the validator's pending-only candidate list does not schedule them automatically.
 
 Record selection before dispatch. Re-read the target ticket and relevant prerequisite state to detect concurrent edits. Do not claim multiple tickets from an old index snapshot. A confirmed resource conflict is a blocker even if the validator's labels missed it.
 
@@ -98,7 +136,7 @@ At completion or a recurring bottleneck, summarize measured effort from existing
 
 Include PROJECT.md, WORKFLOW.md, the absolute canonical workflow directory, external context path, and separate code root with every assignment. Ticket, progress and report paths remain external; never substitute a workflow slug relative to the code checkout. When telemetry is enabled, supply the resolved heartbeat command and verify its returned output path stays in that workflow.
 
-Every assignment uses one canonical contract. Supply the stage skill path; canonical ticket or verification target; code checkout, verified base, and branch or detached state; assignment ID; canonical agent path and canonical parent agent path; reserved test resources and output paths; applicable project constraints; exact handoff path; exact pause-checkpoint path when allocated for a pause; coordinator-resolved dashboard availability; exact progress path when enabled; and coordinator-owned `child_capacity`. State the permitted lifecycle and file writes, required result and cleanup evidence, and the next stage the worker must not start. For implementation, include the TDD companion and require the worker to verify the assignment before edits. For review, state that reviewer children return structured axis reports and evidence to the review parent; they do not write the parent-owned review manifest.
+Every assignment uses one canonical contract. Supply the stage skill path; canonical ticket or verification target; code checkout, verified base, and branch or detached state; assignment ID; component-lane and batch position when used; canonical agent path and canonical parent agent path; reserved test resources, database snapshot and mutable clone identities when used, and output paths; applicable project constraints; exact handoff path; exact pause-checkpoint path when allocated; coordinator-resolved dashboard availability; exact progress path when enabled; and coordinator-owned `child_capacity`. State the permitted lifecycle and file writes, required result and cleanup evidence, and the next stage the worker must not start. For implementation, include the TDD companion and require assignment verification before edits. For review, require a fresh context, identify reusable same-lane artifacts, and state that reviewer children return structured axis reports and evidence to the review parent; they do not write the parent-owned review manifest.
 
 Runtime launch settings come from the runtime's current command help or an existing verified project launcher. Keep automatic context management in the runtime's supported named/default mode. Ticket sizing estimates, context-window guesses, and telemetry never become numeric compaction arguments or token-triggered checkpoint instructions. Worker prompts name semantic checkpoint conditions such as a completed acceptance-criterion slice, a completed check, or a handoff boundary. Follow run-state's [transition checkpoints](run-state.md#transition-checkpoints). Context size alone does not end an assignment. The same worker continues after runtime-managed compaction; replacement requires an actual inability to continue and confirmed old-owner stop.
 

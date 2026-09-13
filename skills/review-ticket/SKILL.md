@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Review one implemented ticket through an agent independent of implementation. Decide whether both quality/standards and specification/behavior pass, need revision, or are blocked. This completes one ticket slice, not the whole feature, integration, release, or deployment.
 
-Reviewer children are read-only and never change ticket state. A parent-authorized [bounded reviewer repair](references/reviewer-repair.md) is the only code-edit exception. The parent owns review records and review lifecycle/index updates, synchronized with coordinator-owned availability changes. Within `coordinate-work`, that coordinator is the parent; return control after this ticket.
+Reviewer children are read-only and never change ticket state. A parent-authorized [bounded reviewer repair](references/reviewer-repair.md) is the only code-edit exception. The parent owns review records and review lifecycle/index updates, synchronized with coordinator-owned availability changes. Within `thin-coordinator`, that coordinator is the parent; return control after this ticket.
 
 ## Establish the target
 
@@ -17,7 +17,7 @@ When the coordinator supplies canonical paths, verify the supplied project, work
 
 Follow the [snapshot rules](references/snapshot.md). Resolve the repository, checkout, baseline, target, included paths, dirty-content identity when applicable, and spec digest. Do not review a changing target or revive a superseded ticket. Use `implemented` as the normal entry state; resume saved `in_review`. Before reopening `ready` or recording `revision_required`, check [availability invalidation](references/review-record.md#reopening-and-invalidation). When `available` is true or `integration_ref` is present, the coordinator clears both, preserving the former manifest as history; a standalone parent waits for that update. Already false/null fields need no coordinator wait unless ownership conflicts.
 
-For re-review, start from changed paths, prior finding IDs and dispositions, affected contracts, reusable evidence candidates, and cited report sections. Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) when choosing checks, enforcing its setup-recovery boundary, and carrying evidence across stages or rounds. Every reviewer independently validates reused evidence against source identity, environment, command, and covered contract.
+Read and apply [monotonic review closure](references/closure.md). For a first review, require its frozen acceptance and source record before dispatch. For re-review, use its bounded successor surface and start from changed paths, prior finding IDs and dispositions, affected contracts, reusable evidence candidates, and cited report sections. Apply the shared [check-scope contract](../setup-workflow/references/check-scope.md) when choosing checks, enforcing its setup-recovery boundary, and carrying evidence across stages or rounds. Every reviewer independently validates reused evidence against source identity, environment, command, and covered contract.
 
 Coordinate ownership with the assignment owner, preserve the implementation assignee, and set `in_review` before dispatch. Resolve ambiguous source, spec, or competing ownership before mutation; ask one focused question only if evidence cannot resolve a material decision.
 
@@ -37,7 +37,7 @@ Confirm implementers and mutating processes stopped. Read-only inspection can sh
 
 Read every report and inspect its cited source, findings, checks, limitations, and cleanup. Both axes need explicit outcomes. A final message, majority vote, or one passing axis cannot replace evidence. Ask a reviewer to investigate unsupported claims or disagreements.
 
-Apply the [review record and decision rules](references/review-record.md). A blocking finding identifies a violated contract or demonstrated maintenance cost, location, evidence, consequence, and bounded correction. Complexity scores and smell thresholds are advisory; preference alone does not block. Confirmed behavior and safety defects do block.
+Apply the [review record and decision rules](references/review-record.md) and the closure contract's `BLOCK`, `DEFER`, and `ESCALATE` dispositions. A blocking finding identifies a violated contract or demonstrated maintenance cost, location, evidence, consequence, and bounded correction. Complexity scores and smell thresholds are advisory; preference alone does not block. Confirmed behavior and safety defects do block.
 
 For an unexplained failure, inspect the linked diagnosis before deciding. Require a reproduction or recorded blocker, tested hypothesis, classification, affected contract, and routed next action. Keep the diagnosis distinct from both axis outcomes. A diagnosis does not authorize the reviewer to implement its recommended correction.
 

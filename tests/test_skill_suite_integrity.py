@@ -70,7 +70,7 @@ class SkillSuiteIntegrityTests(unittest.TestCase):
 
     def test_orchestration_entrypoints_preserve_context_headroom(self):
         budgets = {
-            "coordinate-work": 1600,
+            "thin-coordinator": 1600,
             "implement-ticket": 1600,
             "review-ticket": 1600,
         }

@@ -4,7 +4,7 @@
 
 This reference applies to an active local coordination run. Read it with [run state and recovery](run-state.md); that reference remains the source for coordinator ownership, dispatch recovery, pause controls, and safe takeover.
 
-The dashboard is a standalone application distributed outside the skill package. `coordinate-work` contains its coordination contract only. It never searches its own directory for an HTML page or runtime script, copies the application into a skill installation, or installs it during a run. This separation does not change ticket ownership, lifecycle authority, scheduling, or user authorization.
+The dashboard is a standalone application distributed outside the skill package. `thin-coordinator` contains its coordination contract only. It never searches its own directory for an HTML page or runtime script, copies the application into a skill installation, or installs it during a run. This separation does not change ticket ownership, lifecycle authority, scheduling, or user authorization.
 
 Ticket files remain authoritative for requirements and lifecycle. `RUN.md` remains authoritative for coordination policy and history. The dashboard cannot mutate either, dispatch work, stop an agent, or confer authority to commit, integrate, or clean up resources. Its dependency projection answers what a ticket will unblock; it never authorizes the projected work to start.
 

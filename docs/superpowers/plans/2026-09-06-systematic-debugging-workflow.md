@@ -68,8 +68,8 @@
 - Modify: `skills/review-ticket/references/review-record.md`
 - Modify: `skills/implement-ticket/SKILL.md`
 - Modify: `skills/verify-feature/SKILL.md`
-- Modify: `skills/coordinate-work/SKILL.md`
-- Modify: `skills/coordinate-work/references/run-state.md`
+- Modify: `skills/thin-coordinator/SKILL.md`
+- Modify: `skills/thin-coordinator/references/run-state.md`
 
 **Interfaces:**
 

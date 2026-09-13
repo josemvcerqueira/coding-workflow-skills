@@ -117,7 +117,7 @@ Do not copy ticket bodies into the index. A suggested sequence is guidance only;
 
 Use a single assignment coordinator to claim tickets and update the index. Markdown files are not atomic locks. Do not let several agents independently claim from the same readiness snapshot.
 
-The optional `coordinate-work` skill supplies the execution loop and owns `<workflow>/RUN.md`, runtime mappings, and coordinator ownership. Keep this ticket directory canonical across code worktrees. Its stable assignment IDs are valid assignee values; runtime agent IDs are mapped separately in RUN.md. Planning does not acquire an execution lock or dispatch work.
+The optional `thin-coordinator` skill supplies the execution loop and owns `<workflow>/RUN.md`, runtime mappings, and coordinator ownership. Keep this ticket directory canonical across code worktrees. Its stable assignment IDs are valid assignee values; runtime agent IDs are mapped separately in RUN.md. Planning does not acquire an execution lock or dispatch work.
 
 The coordinator sets the assignee and in_progress status before dispatch, including revision work. The assigned implementer updates only its ticket and implementation record. It records implemented only when the slice works and reports the checks and implementation reference. The coordinator records availability after checking that downstream work can access the implementation, then refreshes the index. After authorized integration, it also records the relative `integration_ref` to that assignment's exact handoff manifest. Availability alone never bypasses review or proves integration.
 

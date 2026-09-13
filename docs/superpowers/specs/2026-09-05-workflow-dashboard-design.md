@@ -6,7 +6,7 @@ Give the user a live, read-only view of a coordinated ticket run without using a
 
 ## Chosen approach
 
-Add a standalone application under `apps/workflow-dashboard`, outside every skill package. A stable `workflow-dashboard` command exposes progress, snapshot, and serve operations. Its long-lived Bun TypeScript server listens on `127.0.0.1`, serves the colocated HTML asset, and returns the last completed snapshot immediately. It schedules a persistent Python telemetry worker every 30 seconds; refreshes never overlap, and the worker retains an incremental JSONL cache. `coordinate-work` contains only the discovery and usage contract. This separates skill installation, coordinator logic, HTTP service, and potentially slow telemetry scan without adding a database, external service, or monitoring agent.
+Add a standalone application under `apps/workflow-dashboard`, outside every skill package. A stable `workflow-dashboard` command exposes progress, snapshot, and serve operations. Its long-lived Bun TypeScript server listens on `127.0.0.1`, serves the colocated HTML asset, and returns the last completed snapshot immediately. It schedules a persistent Python telemetry worker every 30 seconds; refreshes never overlap, and the worker retains an incremental JSONL cache. `thin-coordinator` contains only the discovery and usage contract. This separates skill installation, coordinator logic, HTTP service, and potentially slow telemetry scan without adding a database, external service, or monitoring agent.
 
 The page is a projection. Ticket files remain authoritative for ticket lifecycle, and `RUN.md` remains authoritative for coordination policy and history. Per-agent progress records provide a small machine-readable join between those artifacts and runtime telemetry. The page cannot mutate workflow state or stop an agent.
 
@@ -88,7 +88,7 @@ Run the existing ticket-validator tests, the new dashboard tests, skill validati
 ## Success criteria
 
 - One command starts a readable local dashboard for an active workflow.
-- Installing `coordinate-work` copies no server, HTML, telemetry worker, or dashboard tests.
+- Installing `thin-coordinator` copies no server, HTML, telemetry worker, or dashboard tests.
 - Refreshing the page consumes no model tokens.
 - Exact available telemetry is shown without reading conversation content.
 - Latest-call context and cumulative usage are visually and semantically distinct.

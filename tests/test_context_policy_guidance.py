@@ -9,9 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
     def test_context_telemetry_never_creates_a_workflow_stop(self):
-        dashboard = (ROOT / "skills/coordinate-work/references/dashboard.md").read_text(encoding="utf-8")
-        run_state = (ROOT / "skills/coordinate-work/references/run-state.md").read_text(encoding="utf-8")
-        entrypoint = (ROOT / "skills/coordinate-work/SKILL.md").read_text(encoding="utf-8")
+        dashboard = (ROOT / "skills/thin-coordinator/references/dashboard.md").read_text(encoding="utf-8")
+        run_state = (ROOT / "skills/thin-coordinator/references/run-state.md").read_text(encoding="utf-8")
+        entrypoint = (ROOT / "skills/thin-coordinator/SKILL.md").read_text(encoding="utf-8")
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         design = (ROOT / "docs/superpowers/specs/2026-09-05-workflow-dashboard-design.md").read_text(encoding="utf-8")
         plan = (ROOT / "docs/superpowers/plans/2026-09-05-workflow-dashboard.md").read_text(encoding="utf-8")
@@ -28,10 +28,10 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("solely", combined)
 
     def test_run_request_grants_standing_local_execution_authority(self):
-        entrypoint = (ROOT / "skills/coordinate-work/SKILL.md").read_text(encoding="utf-8").lower()
-        run_state = (ROOT / "skills/coordinate-work/references/run-state.md").read_text(encoding="utf-8").lower()
-        scheduling = (ROOT / "skills/coordinate-work/references/scheduling.md").read_text(encoding="utf-8").lower()
-        agent_prompt = (ROOT / "skills/coordinate-work/agents/openai.yaml").read_text(encoding="utf-8").lower()
+        entrypoint = (ROOT / "skills/thin-coordinator/SKILL.md").read_text(encoding="utf-8").lower()
+        run_state = (ROOT / "skills/thin-coordinator/references/run-state.md").read_text(encoding="utf-8").lower()
+        scheduling = (ROOT / "skills/thin-coordinator/references/scheduling.md").read_text(encoding="utf-8").lower()
+        agent_prompt = (ROOT / "skills/thin-coordinator/agents/openai.yaml").read_text(encoding="utf-8").lower()
 
         combined = "\n".join((entrypoint, run_state, scheduling, agent_prompt))
         self.assertIn("standing local execution authority", combined)
@@ -57,8 +57,8 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("do not paste raw command output", combined)
 
     def test_idle_coordination_waits_do_not_churn_context_or_status(self):
-        entrypoint = (ROOT / "skills/coordinate-work/SKILL.md").read_text(encoding="utf-8").lower()
-        scheduling = (ROOT / "skills/coordinate-work/references/scheduling.md").read_text(encoding="utf-8").lower()
+        entrypoint = (ROOT / "skills/thin-coordinator/SKILL.md").read_text(encoding="utf-8").lower()
+        scheduling = (ROOT / "skills/thin-coordinator/references/scheduling.md").read_text(encoding="utf-8").lower()
         combined = "\n".join((entrypoint, scheduling))
 
         self.assertIn("longest safe event wait", combined)
@@ -66,8 +66,8 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("do not emit", combined)
 
     def test_execution_run_has_one_goal_and_a_final_response_gate(self):
-        entrypoint = (ROOT / "skills/coordinate-work/SKILL.md").read_text(encoding="utf-8").lower()
-        run_state = (ROOT / "skills/coordinate-work/references/run-state.md").read_text(encoding="utf-8").lower()
+        entrypoint = (ROOT / "skills/thin-coordinator/SKILL.md").read_text(encoding="utf-8").lower()
+        run_state = (ROOT / "skills/thin-coordinator/references/run-state.md").read_text(encoding="utf-8").lower()
         combined = "\n".join((entrypoint, run_state))
 
         self.assertIn("create_goal", combined)
@@ -80,7 +80,7 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("wait timeout", combined)
 
     def test_coordinator_pulses_liveness_without_rewriting_progress(self):
-        dashboard = (ROOT / "skills/coordinate-work/references/dashboard.md").read_text(encoding="utf-8").lower()
+        dashboard = (ROOT / "skills/thin-coordinator/references/dashboard.md").read_text(encoding="utf-8").lower()
 
         self.assertIn("workflow-dashboard pulse", dashboard)
         self.assertIn("heartbeat_at", dashboard)
@@ -89,21 +89,21 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("before the stale threshold", dashboard)
 
     def test_live_dashboard_migration_never_installs_during_coordination(self):
-        dashboard = (ROOT / "skills/coordinate-work/references/dashboard.md").read_text(encoding="utf-8").lower()
+        dashboard = (ROOT / "skills/thin-coordinator/references/dashboard.md").read_text(encoding="utf-8").lower()
 
         self.assertNotIn("then install the standalone application", dashboard)
         self.assertIn("explicit maintenance", dashboard)
         self.assertIn("paused or complete", dashboard)
 
     def test_context_pressure_does_not_imply_a_new_coordinator(self):
-        scheduling = (ROOT / "skills/coordinate-work/references/scheduling.md").read_text(encoding="utf-8").lower()
+        scheduling = (ROOT / "skills/thin-coordinator/references/scheduling.md").read_text(encoding="utf-8").lower()
 
         self.assertNotIn("a new coordinator resumes", scheduling)
         self.assertIn("same coordinator resumes", scheduling)
         self.assertIn("truly cannot continue", scheduling)
 
     def test_assignment_contract_has_one_complete_owner(self):
-        scheduling = (ROOT / "skills/coordinate-work/references/scheduling.md").read_text(encoding="utf-8").lower()
+        scheduling = (ROOT / "skills/thin-coordinator/references/scheduling.md").read_text(encoding="utf-8").lower()
 
         for required in (
             "canonical agent path",
@@ -127,12 +127,12 @@ class CoordinatorContextPolicyGuidanceTests(unittest.TestCase):
         self.assertIn("return the repair evidence", repair)
         self.assertIn("parent records", repair)
 
-    def test_optional_dashboard_is_resolved_before_loading_its_full_contract(self):
-        entrypoint = (ROOT / "skills/coordinate-work/SKILL.md").read_text(encoding="utf-8").lower()
+    def test_dashboard_is_loaded_only_when_required_or_already_recorded(self):
+        entrypoint = (ROOT / "skills/thin-coordinator/SKILL.md").read_text(encoding="utf-8").lower()
 
-        self.assertIn("resolve dashboard availability before reading", entrypoint)
-        self.assertIn("when the executable is absent", entrypoint)
-        self.assertIn("do not load the dashboard reference", entrypoint)
+        self.assertIn("user or workflow requires it", entrypoint)
+        self.assertIn("run.md` already records one", entrypoint)
+        self.assertIn("do not start a dashboard solely for coordination", entrypoint)
 
     def test_coordinated_workers_reuse_supplied_workspace_identity(self):
         implementer = (ROOT / "skills/implement-ticket/SKILL.md").read_text(encoding="utf-8").lower()

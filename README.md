@@ -17,7 +17,7 @@ See the [workflow cohesion audit](docs/audits/2026-09-06-workflow-cohesion.md) f
 | [implement-ticket](skills/implement-ticket/SKILL.md) | Implement one assigned slice with TDD, builds, and tests, without review or application startup. |
 | [review-ticket](skills/review-ticket/SKILL.md) | Run independent quality and behavior reviews and record required revisions. |
 | [verify-feature](skills/verify-feature/SKILL.md) | Test the combined feature against its full active spec and save runtime evidence. |
-| [coordinate-work](skills/coordinate-work/SKILL.md) | Coordinate worktrees, implementation, review, durable pause/resume, final verification, and safe spec cleanup. |
+| [thin-coordinator](skills/thin-coordinator/SKILL.md) | Coordinate dependent ticket work with release-path scheduling, event waits, evidence reuse, and durable pause/resume. |
 | [tdd](skills/tdd/SKILL.md) | Apply behavior-focused test-first development in the implementing agent. |
 | [systematic-debugging](skills/systematic-debugging/SKILL.md) | Diagnose unexplained failures and route evidence without expanding the calling stage's authority. |
 | [backend-architecture](skills/backend-architecture/SKILL.md) | Evaluate backend design, data, caching, latency, and scaling tradeoffs. |
@@ -32,12 +32,12 @@ npx skills add . --skill setup-workflow -a codex -a claude-code
 # Authoring stages and their required companions:
 npx skills add . --skill setup-workflow shape-the-idea write-the-spec backend-architecture spec-to-tickets -a codex -a claude-code
 # Coordinated implementation, review, debugging, and final verification:
-npx skills add . --skill setup-workflow coordinate-work implement-ticket tdd systematic-debugging review-ticket spec-to-tickets verify-feature -a codex -a claude-code
+npx skills add . --skill setup-workflow thin-coordinator implement-ticket tdd systematic-debugging review-ticket spec-to-tickets verify-feature -a codex -a claude-code
 # Compatibility entrypoint, if needed:
 npx skills add . --skill setup-project-context setup-workflow -a codex -a claude-code
 ```
 
-The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. coordinate-work, implement-ticket, review-ticket, and verify-feature use systematic-debugging conditionally for unexplained failures. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, systematic-debugging, and backend-architecture can also be used independently within their scope.
+The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. thin-coordinator, implement-ticket, review-ticket, and verify-feature use systematic-debugging conditionally for unexplained failures. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, systematic-debugging, and backend-architecture can also be used independently within their scope.
 
 The optional dashboard is a separate application, not part of any skill installation:
 
@@ -95,23 +95,25 @@ Each ticket separates its focused checks from combined-feature scenarios and req
 
 Then say:
 
-> Use $coordinate-work to finish this feature, including final verification. Use at most two implementation agents.
+> Use $thin-coordinator to finish this feature, including final verification. Use at most two implementation agents.
 
-The coordinator resolves the project, active workflow, ticket directory, and agreed code target. It gives fresh workers exact paths internally. It runs implement-ticket with its TDD companion, then acts as review-ticket's parent. One reviewer covers both axes by default; the coordinator adds a second independent reviewer for higher-risk or uncertain work. Implementers do not choose reviewer count, run their own review, or start the live application; later stages perform applicable real working-path checks. Reviewers propose corrections. A reviewer may complete a narrowly leased mechanical repair during the same round; the implementer makes every other accepted fix.
+The thin coordinator resolves the project, active workflow, ticket directory, and agreed code target. Use it when dependencies, shared resources, or review handoffs make manual routing unsafe; keep one bounded correction direct. It loads only the next release edge, dispatches useful critical-path work, and waits for events instead of rebuilding status. It runs implement-ticket with its TDD companion, then acts as review-ticket's parent. One reviewer covers both axes by default; the coordinator adds a second independent reviewer for higher-risk or uncertain work.
 
-Implementation, review, and final verification share one [check-scope policy](skills/setup-workflow/references/check-scope.md). After a correction, rerun failed and affected checks and retain only independently validated unaffected evidence. A mechanical test-name fix does not by itself justify repeating an hour-long suite. A small authorization or concurrency change may justify broad regression checks. Required failures remain unresolved until corrected and verified; a current report distinguishes new observations, carried evidence, and blocked checks.
+For small tickets, the implementer stops and the source is frozen before a fresh reviewer context takes over the same physical lane. The reviewer may reuse identity-bound build artifacts and a clean run-owned database clone, so independence does not require rebuilding an identical stack. The first review freezes one finding batch; one coherent correction gets one delta-focused successor review. Further findings require a parent disposition rather than an automatic review loop.
+
+Implementation, review, and final verification share one [check-scope policy](skills/setup-workflow/references/check-scope.md). Before an expensive runtime, one collect-all readiness gate validates artifacts, explicit paths, frozen source, and durable failure evidence without allocating resources. Readiness watches the owning process and fails immediately when startup can no longer succeed. After a correction, rerun failed and affected checks and retain only independently validated unaffected evidence; unchanged broad suites are not repeated merely because another review round exists.
 
 The coordinator owns scheduling, reservations, recovery, integration, and lifecycle evidence. Workers own code and detailed investigation. An unexplained or repeated failure invokes the local systematic-debugging companion in the calling stage. Reviewers and verifiers use diagnosis-only mode and cannot edit product source; implementers can correct a confirmed product cause within their existing lease and TDD contract. Three unsuccessful root-cause corrections route to architectural reconsideration instead of another speculative loop. Existing timestamps and measured check durations can show where effort went without another tracker. Durable `RUN.md` state supports continuity; creating a separate task-level goal requires an explicit goal request and permitted tool support.
 
-Parallel implementers receive separate coordinator-owned worktrees and isolated mutable test resources. Workers do not switch branches or create replacement worktrees independently. Review waits for writers and their processes to stop. Starting an explicit coordination run grants standing authority for local commits and serialized integration of reviewed work into its selected local consumer; continue and resume preserve the recorded policy without expanding it. Pushes, pull requests, deployments, shared infrastructure changes, history rewrites, and destructive handling of existing work still require separate authority.
+Parallel implementers receive separate coordinator-owned worktrees and isolated mutable test resources. Compatible small tickets may run sequentially in one component lane with separate baselines, handoffs, and lifecycle evidence. Repeated lanes may restore a content-addressed, read-only pre-seeded database snapshot into separate run-owned clones; schema, engine, migration, or seed changes invalidate it. Starting an explicit coordination run grants standing authority for local commits and serialized integration of reviewed work into its selected local consumer; pushes, deployments, shared infrastructure changes, history rewrites, and destructive handling of existing work still require separate authority.
 
 Use the coordinator to ask for status, pause, continue, or resume by feature name. Status is read-only. `pause` stops new dispatch, gives every active runtime its own Markdown handoff path, and creates an immutable resume manifest under the external workflow's `checkpoints/` directory. `continue` and `resume` reacquire ownership, reconcile that manifest with current files and runtime state, and execute its first saved resume action. Source changes remain in their recorded code worktrees; canonical tickets, handoffs, progress records, `RUN.md`, and pause artifacts remain together in the external workflow shared across worktrees. Unknown liveness never permits a clean-pause claim, duplicate worker, or workspace reuse.
 
-> Use $coordinate-work to pause this feature.
+> Use $thin-coordinator to pause this feature.
 >
-> Use $coordinate-work to continue this feature.
+> Use $thin-coordinator to continue this feature.
 
-For an active local run, the coordinator can also start the separately installed read-only dashboard on `127.0.0.1`. The coordinator and Bun dashboard server run as separate processes. The server refreshes telemetry through a persistent background worker every 30 seconds and serves the last completed snapshot immediately, so a slow session scan cannot hold up the page. The page gives a compact view of ticket completion, phase, review returns, active agents, and current context. Detailed runtime records remain in the API and workflow artifacts. Three-second browser polls rerender only when the snapshot changes.
+When the user or workflow requires it, an active local run can use the separately installed read-only dashboard on `127.0.0.1`. The coordinator does not start it merely to coordinate. The server refreshes telemetry through a background worker and serves the last completed snapshot; detailed runtime records remain in the workflow artifacts.
 
 Exact latest-call input shows occupancy against the runtime-reported context window, but no fixed token count stops or transfers work. The runtime manages compaction; the same coordinator reloads compact run records and continues with its existing workers and dashboard. The page shows only current occupancy and a compact used/window value. Cumulative counters and precise telemetry failure reasons remain diagnostic data rather than user-facing status.
 

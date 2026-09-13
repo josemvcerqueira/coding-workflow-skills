@@ -1,6 +1,6 @@
 # Workflow Dashboard
 
-Standalone localhost dashboard for active coding-workflow runs. The first view shows what is running, whether it is healthy and on schedule, which runtime model is actually observed, exact available token use, and which tickets can start when the current work finishes. Detailed records remain in the read-only API. The Bun server, browser page, and telemetry worker live here so installing `coordinate-work` copies instructions only. Runtime requirements are Bun 1.3 or newer and Python 3.10 or newer.
+Standalone localhost dashboard for active coding-workflow runs. The first view shows what is running, whether it is healthy and on schedule, which runtime model is actually observed, exact available token use, and which tickets can start when the current work finishes. Detailed records remain in the read-only API. The Bun server, browser page, and telemetry worker live here so installing `thin-coordinator` copies instructions only. Runtime requirements are Bun 1.3 or newer and Python 3.10 or newer.
 
 ## Install
 

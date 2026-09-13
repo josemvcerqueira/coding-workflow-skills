@@ -1,0 +1,6 @@
+interface:
+  display_name: "Thin Coordinator"
+  short_description: "Coordinate dependent ticket work with low overhead"
+  default_prompt: "Use $thin-coordinator to run, pause, or continue this local workflow with one writer per source surface, release-path scheduling, event-driven waits, evidence reuse, and no more than three plain-English sentences per milestone by default. Reuse recorded local authority; do not push, deploy, mutate shared infrastructure, or overwrite user work unless explicitly authorized."
+policy:
+  allow_implicit_invocation: false

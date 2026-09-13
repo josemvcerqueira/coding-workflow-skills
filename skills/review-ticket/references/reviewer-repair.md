@@ -1,6 +1,6 @@
 # Bounded reviewer repair
 
-Use reviewer repair to close a small, mechanical review finding without an implementation and re-review round. It is an exception to the reviewer's read-only default. The parent must grant it within existing edit authorization and record an exact file lease before the reviewer writes. A standalone review remains read-only unless the user explicitly authorized fixes. During an authorized `coordinate-work` run, the coordinator may grant the lease because that run already authorizes implementation edits, unless the user or repository requires review-only operation.
+Use reviewer repair to close a small, mechanical review finding without an implementation and re-review round. It is an exception to the reviewer's read-only default. The parent must grant it within existing edit authorization and record an exact file lease before the reviewer writes. A standalone review remains read-only unless the user explicitly authorized fixes. During an authorized `thin-coordinator` run, the coordinator may grant the lease because that run already authorizes implementation edits, unless the user or repository requires review-only operation.
 
 ## Eligibility
 

@@ -25,7 +25,7 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
     def test_rereview_contract_is_delta_focused_and_preserves_independence(self):
         review = read("review-ticket/SKILL.md")
         record = read("review-ticket/references/review-record.md")
-        scheduling = read("coordinate-work/references/scheduling.md")
+        scheduling = read("thin-coordinator/references/scheduling.md")
         combined = "\n".join((review, record, scheduling))
 
         for required in ("changed paths", "prior finding ids", "affected contracts", "reusable evidence"):
@@ -36,7 +36,7 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
     def test_expensive_test_capacity_and_concurrent_failures_are_preserved(self):
         implementation = read("implement-ticket/SKILL.md")
         briefs = read("review-ticket/references/reviewer-briefs.md")
-        scheduling = read("coordinate-work/references/scheduling.md")
+        scheduling = read("thin-coordinator/references/scheduling.md")
         combined = "\n".join((implementation, briefs, scheduling))
 
         self.assertIn("test-suite capacity", scheduling)
@@ -47,18 +47,18 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
 
     def test_all_three_stages_use_the_shared_handoff_manifest(self):
         manifest = read("setup-workflow/references/handoff-manifest.md")
-        for skill in ("implement-ticket/SKILL.md", "review-ticket/SKILL.md", "coordinate-work/SKILL.md"):
+        for skill in ("implement-ticket/SKILL.md", "review-ticket/SKILL.md", "thin-coordinator/SKILL.md"):
             self.assertIn("handoff manifest", read(skill))
         for field in (
             "source_identity", "report_paths", "changed_paths", "affected_contracts",
             "prior_finding_ids", "checks", "explicit_skips", "cleanup", "next_action",
         ):
             self.assertIn(field, manifest)
-        self.assertIn("follow the manifest's recorded paths", read("coordinate-work/SKILL.md"))
+        self.assertIn("follow the manifest's recorded paths", read("thin-coordinator/SKILL.md"))
 
     def test_lifecycle_gates_and_context_measures_remain_distinct(self):
-        dashboard = read("coordinate-work/references/dashboard.md")
-        run_state = read("coordinate-work/references/run-state.md")
+        dashboard = read("thin-coordinator/references/dashboard.md")
+        run_state = read("thin-coordinator/references/run-state.md")
         combined = dashboard + "\n" + run_state
 
         for gate in ("implemented", "reviewed", "integrated", "whole-feature verified"):
@@ -73,7 +73,7 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
         record = read("review-ticket/references/review-record.md")
         briefs = read("review-ticket/references/reviewer-briefs.md")
         repair = read("review-ticket/references/reviewer-repair.md")
-        coordination = read("coordinate-work/SKILL.md")
+        coordination = read("thin-coordinator/SKILL.md")
         manifest = read("setup-workflow/references/handoff-manifest.md")
         ticket_format = read("spec-to-tickets/references/ticket-format.md")
         combined = "\n".join((review, record, briefs, repair, coordination, ticket_format))
@@ -95,9 +95,9 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
     def test_dashboard_and_handoffs_use_exact_lifecycle_and_report_evidence(self):
         implementation = read("implement-ticket/SKILL.md")
         review = read("review-ticket/SKILL.md")
-        coordination = read("coordinate-work/SKILL.md")
-        dashboard = read("coordinate-work/references/dashboard.md")
-        run_state = read("coordinate-work/references/run-state.md")
+        coordination = read("thin-coordinator/SKILL.md")
+        dashboard = read("thin-coordinator/references/dashboard.md")
+        run_state = read("thin-coordinator/references/run-state.md")
         ticket_format = read("spec-to-tickets/references/ticket-format.md")
         combined = "\n".join((implementation, review, coordination, dashboard, run_state, ticket_format))
 
@@ -112,8 +112,8 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
         self.assertIn("keep summaries, next actions", dashboard)
 
     def test_live_instruction_changes_require_acknowledged_delivery(self):
-        coordination = read("coordinate-work/SKILL.md")
-        run_state = read("coordinate-work/references/run-state.md")
+        coordination = read("thin-coordinator/SKILL.md")
+        run_state = read("thin-coordinator/references/run-state.md")
 
         self.assertIn("live instruction delivery", coordination)
         for required in (
@@ -144,8 +144,8 @@ class PolymarketWorkflowGuidanceTests(unittest.TestCase):
             self.assertIn(required, checks)
 
     def test_scheduling_depends_on_concrete_needs_and_separates_adoption(self):
-        coordination = read("coordinate-work/SKILL.md")
-        scheduling = read("coordinate-work/references/scheduling.md")
+        coordination = read("thin-coordinator/SKILL.md")
+        scheduling = read("thin-coordinator/references/scheduling.md")
 
         self.assertIn("dependency-based scheduling", coordination)
         for required in (

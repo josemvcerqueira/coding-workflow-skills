@@ -73,9 +73,9 @@ workflow-dashboard serve WORKFLOW [--sessions-root PATH] [--capacity N] [--host 
 
 **Files:**
 
-- Modify: `skills/coordinate-work/SKILL.md`
-- Modify: `skills/coordinate-work/references/run-state.md`
-- Create: `skills/coordinate-work/references/dashboard.md`
+- Modify: `skills/thin-coordinator/SKILL.md`
+- Modify: `skills/thin-coordinator/references/run-state.md`
+- Create: `skills/thin-coordinator/references/dashboard.md`
 
 **Interfaces:**
 
@@ -94,7 +94,7 @@ workflow-dashboard serve WORKFLOW [--sessions-root PATH] [--capacity N] [--host 
 
 - Modify: `skills/implement-ticket/SKILL.md`
 - Modify: `skills/tdd/SKILL.md`
-- Modify: `skills/coordinate-work/references/scheduling.md`
+- Modify: `skills/thin-coordinator/references/scheduling.md`
 - Create: `skills/implement-ticket/references/delegation.md`
 
 **Interfaces:**

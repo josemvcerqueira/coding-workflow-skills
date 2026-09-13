@@ -101,7 +101,7 @@ A confirmed product defect returns to the coordinator with affected requirements
 
 ## Coordinator routing
 
-`coordinate-work` treats an ambiguous failure, a failed correction, or contradictory evidence as a diagnosis state rather than another implementation/review retry. It assigns the correct mode, preserves target and evidence identity, and routes the result:
+`thin-coordinator` treats an ambiguous failure, a failed correction, or contradictory evidence as a diagnosis state rather than another implementation/review retry. It assigns the correct mode, preserves target and evidence identity, and routes the result:
 
 | Classification | Next owner |
 | --- | --- |

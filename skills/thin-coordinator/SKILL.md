@@ -1,25 +1,30 @@
 ---
-name: coordinate-work
-description: Use when the user explicitly asks to run, continue, resume, pause, or inspect implementation and review of an existing local ticket set through one coordinating agent.
+name: thin-coordinator
+description: Use when the user explicitly asks to run, continue, resume, or pause an existing local ticket workflow whose dependent assignments, shared resources, or independent reviews need coordination.
 license: MIT
 disable-model-invocation: true
 ---
 
-# Coordinate work
+# Thin coordinator
 
-Be the user's single contact for an existing ticket set. Assign implementation, arrange independent review, return required revisions, and keep a resumable record. Do not implement tickets yourself. Ticket review does not prove integration, release, or whole-feature verification.
+Optimize safe time to the next accepted release point. Agent utilization, artifact count, and narration are not progress. Own workflow state, scheduling, and handoffs; leave source changes and detailed investigation to assigned workers. Ticket review does not prove integration, release, or whole-feature verification.
 
 An execution request authorizes implementation and review within the selected ticket set and saved limits. Include whole-feature verification only when requested. A status request is read-only. Continue and resume preserve the recorded scope and authority; they do not expand it.
+
+Use coordination when three or more dependent assignments cross stage boundaries, workers contend for
+mutable resources, or a run needs durable pause/resume. A single bounded source correction stays with
+one implementer followed by one independent reviewer; a read-only status check acquires no workflow
+ownership.
 
 Treat run, continue, and resume as one persistent terminal objective. Follow [task goal and turn continuity](references/run-state.md#task-goal-and-turn-continuity): `RUN.md` drives persistence; use a task-level goal only when its tool contract authorizes it. A status-only inspection creates no goal.
 
 ## Load only what the current stage needs
 
-Resolve the project and canonical workflow through the [external workspace contract](../setup-workflow/references/workspace.md). Read external `CONTEXT.md`, applicable repository instructions, `WORKFLOW.md`, the ticket index, active ticket metadata, and the compact current state in `RUN.md`. Do not load the full backlog, journals, transcripts, review history, or codebase.
+Resolve the project and canonical workflow through the [external workspace contract](../setup-workflow/references/workspace.md). Read external `CONTEXT.md`, applicable repository instructions, `WORKFLOW.md`, the ticket index, compact `RUN.md`, and only tickets at the next release edge. Follow current handoff pointers for detail; do not load the full backlog, journals, transcripts, historical reviews, or codebase.
 
-Read [run state and recovery](references/run-state.md) before ownership or mutation. Before allocation or dispatch, read only the relevant sections of [workspaces and scheduling](references/scheduling.md): serial workspace, resources, capacity, and handoff are core; parallel worktrees, delegation groups, availability, and integration are conditional on using those paths. Read [durable pause and resume](references/pause-resume.md) only for those controls. Read [feature verification](references/feature-verification.md) only when entering or reporting that requested stage.
+Read [run state and recovery](references/run-state.md) before ownership or mutation. Before allocation or dispatch, read only the relevant sections of [workspaces and scheduling](references/scheduling.md): serial workspace, resources, capacity, and handoff are core; component batches, database snapshots, same-lane review, parallel worktrees, delegation groups, availability, and integration are conditional on using those paths. Read [durable pause and resume](references/pause-resume.md) only for those controls. Read [feature verification](references/feature-verification.md) only when entering or reporting that requested stage.
 
-Resolve dashboard availability before reading its full contract by checking the recorded run state and resolving `workflow-dashboard` once from `PATH`. When the executable is absent and no dashboard process is recorded, note that once and do not load the dashboard reference. When it is available, running, stale, or being paused, read [dashboard visibility and context policy](references/dashboard.md) for that action.
+Use the dashboard only when the user or workflow requires it or `RUN.md` already records one. Then resolve `workflow-dashboard` once and read [dashboard visibility and context policy](references/dashboard.md). Do not start a dashboard solely for coordination.
 
 Locate the companion `implement-ticket`, `tdd`, `review-ticket`, [systematic-debugging](../systematic-debugging/SKILL.md), ticket validator, and ticket-format contract before first use. Do not preload worker entrypoints or review references: give workers their resolved skill paths, and read `review-ticket` when review begins. Systematic debugging is loaded only for an unexplained failure or failed correction. Report a missing required companion; do not silently install or substitute it.
 
@@ -37,13 +42,14 @@ Before first dispatch and after ticket or graph changes, validate the ticket dir
 
 ## Run the loop
 
-Repeat while running:
+Repeat only on a user instruction, worker result, blocker, review verdict, or runtime-state change:
 
-1. Reconcile new user instructions, runtime results, handoffs, and physical workspace evidence. Apply [live instruction delivery](references/run-state.md#live-instruction-delivery) to any active worker whose scope, retry permission, or checkpoint/stop boundary changes. Save accepted state changes first.
-2. Route a stable `implemented` ticket to review. Route findings through [healing and scope control](references/run-state.md#healing-and-scope-control), using the smallest sufficient repair and check scope.
-3. Select eligible revisions or pending tickets through [dependency-based scheduling](references/scheduling.md#dependency-based-scheduling). Prefer blocker-clearing work without starving independent tickets.
-4. Record assignment ID, attempt, checkout, base, reservations, handoff path, progress path, and dispatch intent. Set `assignee` and `in_progress` before implementation dispatch; record the returned runtime ID separately.
-5. Do useful coordination checks while workers run. Otherwise use the longest safe event wait. Keep the coordinator liveness pulse current around these waits when the dashboard is enabled. After an unchanged wait, do not re-read unchanged artifacts, rebuild status, or emit user-facing prose; pulse if due and wait again. A timeout is not failure.
+1. Reconcile the new fact once and persist one atomic transition. Apply [live instruction delivery](references/run-state.md#live-instruction-delivery) when an active worker's scope, retry permission, or stop boundary changes.
+2. Select the smallest ready action on the measured release critical path through [dependency-based scheduling](references/scheduling.md#dependency-based-scheduling). Reviewed work awaiting integration outranks unrelated new implementation; avoid starving independent work.
+3. Dispatch only work that can finish usefully before the next release point with disjoint source and mutable-resource ownership. Record assignment identity, checkout, reservations, handoff, and intent before launch, then record the real or unknown runtime result.
+4. Route stable implementation to review and findings through [healing and scope control](references/run-state.md#healing-and-scope-control). Use the smallest sufficient repair and carry valid evidence under the shared check-scope contract.
+5. While work runs, perform only pending integration, decision, cleanup, or readiness work that advances the release edge. Otherwise use the longest safe event wait. An unchanged wait causes no artifact reread, status rebuild, or user message; pulse only when a required dashboard is enabled.
+6. Treat a worker final message as a signal to verify its handoff, stopped writers, source identity, checks, and cleanup. Advance exactly one lifecycle boundary.
 
 ### Final response gate
 
@@ -55,7 +61,7 @@ Assignment prompts contain pointers and the current delta, not copied documents.
 
 ## Review, integration, and completion
 
-At review, follow `review-ticket` as its parent. Use one reviewer, independent of implementation, covering both axes by default; use two when its recorded risk rules require it. The coordinator decides. Freeze the target and reserve mutable test resources. A worker's final message is a signal to inspect evidence, not completion proof.
+At review, follow `review-ticket` as its parent and apply its [monotonic closure contract](../review-ticket/references/closure.md). Freeze the complete first finding batch, apply one coherent correction, then use a delta-focused independent successor review. Use one reviewer covering both axes by default and two only when recorded risk requires it. The coordinator accepts dispositions and changes lifecycle; reviewers recommend them.
 
 Respect `ready`, `revision_required`, and blocked `in_review` outcomes. Permit reviewer repair only through its explicit bounded contract and lease. Do not repeat an unchanged failed revision; route it through systematic debugging with the calling stage's existing authority, then assign the classified next action.
 
@@ -65,6 +71,6 @@ For pause or resume, use the durable procedure and preserve unknown workers and 
 
 ## Context and reporting
 
-Keep policy, live mappings, active blockers, current findings, and artifact pointers in coordinator context. Use targeted reads; raw evidence stays in files. Context telemetry is advisory. Save transition checkpoints under run-state; let the runtime manage compaction without interrupting active checks. After compaction, continue as the same coordinator with the same lock, dashboard, workers, reservations, and authority. Never stop, transfer, ask the user, or replace the coordinator solely because of token usage. If the runtime truly cannot continue, save an exact handoff and use normal ownership recovery.
+Keep only policy, live mappings, active blockers, current findings, and artifact pointers in context. Raw evidence stays in files. Let the runtime manage compaction; continue with the same ownership and authority afterward. If it truly cannot continue, save an exact handoff and use normal ownership recovery.
 
 Send user-facing updates only for a changed critical path, a new blocker or genuine decision, an implementation or review result, integration, verification, pause, or completion. Default each update to no more than three short sentences: what happened in ordinary language; the concrete fix or result and why it matters; and what happens next, including whether the user must act. Translate workflow terms before reporting and keep ticket/finding IDs, hashes, paths, counts, and commands in the artifacts unless the user asks or needs one to distinguish the target. Compress relevant safety context to one sentence such as “Nothing external or shared was touched”; omit inventories of untouched systems and unchanged waiting state.

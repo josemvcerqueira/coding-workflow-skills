@@ -41,9 +41,21 @@ do not inject a deliberate failure into every product run. A harness correction 
 another expensive attempt until focused regressions force each defect, a combined regression proves
 the collect-all result, and any required independent review passes.
 
+Every readiness wait observes both the ready condition and the exact process, task, or container that
+can satisfy it. A terminal owner fails immediately and preserves its output; it never consumes the
+remaining timeout after success has become impossible. Prove required runtime packages and production
+commands before startup so a missing executable cannot become a long readiness wait.
+
+The first deterministic harness-caused failure leaves product acceptance and enters bounded harness
+diagnosis against the same focused target. Preserve the failure, collect all independently
+discoverable setup defects, correct one frozen batch, and review the affected harness seams. After two
+harness-caused failures for the same candidate, the circuit is open: no further expensive acceptance
+attempt is eligible until the correction and any required independent review pass. Diagnostic probes
+remain non-accepting evidence.
+
 For background execution, retain the tool's task/session handle and consume its terminal result. If no handle exists, track the launched child PID plus start identity and capture its exit status. Never infer liveness from `pgrep -f` or script-name matches: the polling shell can match itself. Logging wrappers must propagate the check's exit code. Await terminal results before handoff; compaction or a worker turn ending is not command completion.
 
-Give each setup/check attempt a distinct evidence path with its command, input identities and result. Preserve failed logs before correcting a harness. After a setup failure, reconcile owned resources and unchanged source, apply only coordinator changes acknowledged under [live instruction delivery](../../coordinate-work/references/run-state.md#live-instruction-delivery), and retry only the affected setup/check after a diagnosed condition changes. Keep the current assignment and valid evidence.
+Give each setup/check attempt a distinct evidence path with its command, input identities and result. Preserve failed logs before correcting a harness. After a setup failure, reconcile owned resources and unchanged source, apply only coordinator changes acknowledged under [live instruction delivery](../../thin-coordinator/references/run-state.md#live-instruction-delivery), and retry only the affected setup/check after a diagnosed condition changes. Keep the current assignment and valid evidence.
 
 For review, the second failed setup attempt after that recovery, or an explicit coordinator checkpoint, reaches the setup-recovery boundary. Start no further setup attempt. Let a healthy in-flight command reach its terminal result unless a safety or explicit stop instruction requires otherwise; a time checkpoint alone does not interrupt it. Preserve findings, command results and evidence paths, candidate identity, outstanding acceptance checks, and owned resource and cleanup state. Produce the current review handoff with every unavailable requirement and verification explicitly `blocked`, and route further repair to the responsible harness owner under [systematic debugging](../../systematic-debugging/SKILL.md). Keep completed review work and acceptance criteria intact; do not restart the whole review, retry by replacing the reviewer, or weaken a required check.
 

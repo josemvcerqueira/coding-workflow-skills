@@ -56,8 +56,8 @@ class SystematicDebuggingGuidanceTests(unittest.TestCase):
             "skills/review-ticket/references/reviewer-briefs.md",
             "skills/implement-ticket/SKILL.md",
             "skills/verify-feature/SKILL.md",
-            "skills/coordinate-work/SKILL.md",
-            "skills/coordinate-work/references/run-state.md",
+            "skills/thin-coordinator/SKILL.md",
+            "skills/thin-coordinator/references/run-state.md",
         )
 
         for relative in consumers:
@@ -100,7 +100,7 @@ class SystematicDebuggingGuidanceTests(unittest.TestCase):
 
     def test_third_unsuccessful_correction_escalates_architecture(self):
         implementer = read("skills/implement-ticket/SKILL.md")
-        coordinator = read("skills/coordinate-work/references/run-state.md")
+        coordinator = read("skills/thin-coordinator/references/run-state.md")
 
         for name, text in (("implementer", implementer), ("coordinator", coordinator)):
             with self.subTest(stage=name):

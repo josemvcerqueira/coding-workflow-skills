@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "coordinate-work"
+SKILL = ROOT / "skills" / "thin-coordinator"
 APP = ROOT / "apps" / "workflow-dashboard"
 PACKAGE_FILES = {
     "README.md",
@@ -32,7 +32,7 @@ def pack_entry(output):
 class DashboardDistributionTests(unittest.TestCase):
     def test_coordinate_skill_package_contains_instructions_only(self):
         with tempfile.TemporaryDirectory(prefix="workflow dashboard ") as temporary:
-            installed = Path(temporary) / "coordinate-work"
+            installed = Path(temporary) / "thin-coordinator"
             shutil.copytree(SKILL, installed)
             runtime_files = [
                 path.relative_to(installed).as_posix()
