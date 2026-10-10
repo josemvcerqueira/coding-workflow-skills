@@ -1,0 +1,6 @@
+interface:
+  display_name: "Human Readable Code"
+  short_description: "Make workflows clear on the first cleanup pass"
+  default_prompt: "Use $human-readable-code to make this code easy for humans to read, including formatting, names, and query boundaries."
+policy:
+  allow_implicit_invocation: true
