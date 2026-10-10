@@ -1,0 +1,6 @@
+interface:
+  display_name: "TypeScript House Style"
+  short_description: "Consistent TypeScript with Drizzle and clear workflows"
+  default_prompt: "Use $typescript-house-style to write or refactor this TypeScript using our preferred libraries and composition conventions."
+policy:
+  allow_implicit_invocation: true

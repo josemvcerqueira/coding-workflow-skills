@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
-IMPLICIT_SKILLS = {"systematic-debugging"}
+IMPLICIT_SKILLS = {"systematic-debugging", "human-readable-code", "typescript-house-style"}
 
 
 class SkillSuiteIntegrityTests(unittest.TestCase):

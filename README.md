@@ -21,6 +21,8 @@ See the [workflow cohesion audit](docs/audits/2026-09-06-workflow-cohesion.md) f
 | [tdd](skills/tdd/SKILL.md) | Apply behavior-focused test-first development in the implementing agent. |
 | [systematic-debugging](skills/systematic-debugging/SKILL.md) | Diagnose unexplained failures and route evidence without expanding the calling stage's authority. |
 | [backend-architecture](skills/backend-architecture/SKILL.md) | Evaluate backend design, data, caching, latency, and scaling tradeoffs. |
+| [human-readable-code](skills/human-readable-code/SKILL.md) | Improve spacing, names, workflow structure, and persistence boundaries for human readers. |
+| [typescript-house-style](skills/typescript-house-style/SKILL.md) | Write consistent TypeScript with Prettier, ESLint, Drizzle, Remeda, and ts-pattern. |
 
 ## Install
 
@@ -35,9 +37,13 @@ npx skills add . --skill setup-workflow shape-the-idea write-the-spec backend-ar
 npx skills add . --skill setup-workflow coordinate-work implement-ticket tdd systematic-debugging review-ticket spec-to-tickets verify-feature -a codex -a claude-code
 # Compatibility entrypoint, if needed:
 npx skills add . --skill setup-project-context setup-workflow -a codex -a claude-code
+# Independent readability and TypeScript conventions:
+npx skills add . --skill human-readable-code typescript-house-style -a codex -a claude-code
 ```
 
 The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. coordinate-work, implement-ticket, review-ticket, and verify-feature use systematic-debugging conditionally for unexplained failures. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, systematic-debugging, and backend-architecture can also be used independently within their scope.
+
+human-readable-code and typescript-house-style are independent coding standards and require no workflow companions. Use `$human-readable-code` for general readability or `$typescript-house-style` for the preferred TypeScript stack and composition conventions. Both also support automatic discovery. Installing the skills does not install their preferred project libraries.
 
 The optional dashboard is a separate application, not part of any skill installation:
 
@@ -57,7 +63,7 @@ Select the product project and say:
 
 > Use $setup-workflow to prepare this project for our coding workflow.
 
-Setup explores the project, using focused read-only subagents for larger projects. The parent writes the external context and registry. It does not run project builds, tests, setup scripts, or services, install skills, create implementation worktrees, or invent feature tickets. It preserves user-maintained repository instructions and selected standards. Missing optional context does not block safe work; missing required guidance remains an explicit gap. This collection does not include a curated language-skill catalog.
+Setup explores the project, using focused read-only subagents for larger projects. The parent writes the external context and registry. It does not run project builds, tests, setup scripts, or services, install skills, create implementation worktrees, or invent feature tickets. It preserves user-maintained repository instructions and selected standards. Missing optional context does not block safe work; missing required guidance remains an explicit gap. The included typescript-house-style supplies an optional TypeScript standard; other language standards are selected separately.
 
 The default layout is outside the main product checkout:
 
@@ -135,7 +141,7 @@ See the [workspace contract](skills/setup-workflow/references/workspace.md) and 
 
 ## Invocation and format
 
-All user-facing workflow skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Their Codex policy sets `allow_implicit_invocation: false`, and their Claude metadata sets `disable-model-invocation: true`. `systematic-debugging` is the sole model-invoked exception so an active implementation, review, verification, or coordination stage can load it when an unexplained failure matches its trigger. Invocation never expands that stage's authority.
+All user-facing workflow stage skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Their Codex policy sets `allow_implicit_invocation: false`, and their Claude metadata sets `disable-model-invocation: true`. `systematic-debugging` supports model invocation so an active implementation, review, verification, or coordination stage can load it when an unexplained failure matches its trigger. The independent `human-readable-code` and `typescript-house-style` standards also support model invocation. Invocation never expands the current task's authority.
 
 The focused [systematic-debugging behavior evaluation](evals/systematic-debugging/README.md) defines an ambiguous reviewer failure and a direct static-finding control. These model-based scenarios are separate from the deterministic test suite and make no pass claim until run with fresh agents.
 
