@@ -35,7 +35,7 @@ Kanso asks of each element: is this the plainest form that still does the job? I
 
 **KA-7 Motion has a cause.** PASS when every animation runs because of a user action or a change in data or state; zero entrance animations for show, parallax or idle motion. Evidence: each animation and its trigger.
 
-**KA-8 Shortest path.** PASS when the screen's main task takes no step the floors do not require: no intermediate screen, modal, wizard step or confirm dialog where an Undo window would meet the money floor. Evidence: the tap count for the main task and each step's reason.
+**KA-8 Shortest path.** PASS when the screen's main task takes no step the floors do not require: no intermediate screen, modal, wizard step or confirm dialog where an Undo window would meet the consequential-actions floor. Evidence: the tap count for the main task and each step's reason.
 
 ## Common failures, ranked
 
@@ -50,12 +50,12 @@ Kanso asks of each element: is this the plainest form that still does the job? I
 
 ## Before and after
 
-**Trade card.** Before: a glass card with a gradient border, a glowing "BUY NOW 🚀" button and a confirm modal ("Are you sure you want to buy?"). After: a flat card, a plain "▲ Up" button, and a 3 s Undo window with one sentence. Same safety, one step fewer, no ornament.
+**Purchase card.** Before: a glass card with a gradient border, a glowing "BUY NOW 🚀" button and a confirm modal ("Are you sure you want to buy?"). After: a flat card, a plain "Buy" button, and a 3 s Undo window with one sentence. Same safety, one step fewer, no ornament.
 
 **Settings row.** Before: gear icon, "Notification Preferences" label, a chevron, a help icon and a caption under it. After: "Notifications" and the current value; the row itself opens the detail.
 
-**Empty state.** Before: an illustration, "Nothing here yet!", a paragraph and three buttons. After: "No calls yet." and one button that opens the feed.
+**Empty state.** Before: an illustration, "Nothing here yet!", a paragraph and three buttons. After: "No orders yet." and one button that opens the catalogue.
 
 ## The misreading
 
-Kanso is not bare or cold, and it never cuts what makes the object usable or safe. The amount, direction and worst case of a money action stay (the money floor); a label that a person needs to understand an icon stays. Kanso removes ornament, effects, steps and filler; Taru o Shiru decides how much content is enough.
+Kanso is not bare or cold, and it never cuts what makes the object usable or safe. The cost and worst case of a consequential action stay (floor 5); a label that a person needs to understand an icon stays. Kanso removes ornament, effects, steps and filler; Taru o Shiru decides how much content is enough.

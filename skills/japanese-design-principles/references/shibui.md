@@ -27,7 +27,7 @@ A Shibui screen does not shout. It has one loud thing, a calm palette, a quiet v
 
 **SH-3 One loud element.** PASS when exactly one element per screen state sits at the top of the visual hierarchy (largest size or strongest contrast), and no second element competes at that level. Evidence: the loudest element and the next one down.
 
-**SH-4 Quiet voice.** PASS when UI copy has zero exclamation marks, no all-caps run longer than 2 words, no hype words ("amazing", "huge", "don't miss", "insane", "to the moon"), and no emoji in interface chrome. User-written content is exempt. Evidence: strings checked, with any hits.
+**SH-4 Quiet voice.** PASS when UI copy has zero exclamation marks, no all-caps run longer than 2 words, no hype words ("amazing", "huge", "don't miss", "insane", "you won't believe"), and no emoji in interface chrome. User-written content is exempt. Evidence: strings checked, with any hits.
 
 **SH-5 Nothing begs.** PASS when every badge, dot and counter marks something this user must act on, and at most one element per screen moves on its own (a live-data marker), at low amplitude. Evidence: each badge and each self-moving element with its reason.
 
@@ -40,18 +40,18 @@ A Shibui screen does not shout. It has one loud thing, a calm palette, a quiet v
 1. Three or four accent colours (blue links, purple buttons, orange badges). Fix: one accent; the rest neutral.
 2. Two hero elements fighting (a big balance and a big banner). Fix: one wins; shrink or remove the other.
 3. Red dots and badges on tabs for things that need nothing from the user. Fix: remove them.
-4. "🔥 HUGE MOVE! Don't miss out!" Fix: "Nvidia −6% today."
+4. "🔥 HUGE SALE! Don't miss out!" Fix: "20% off until Friday."
 5. Confetti on every tap. Fix: one short moment on a good result only.
-6. Prices that jump sideways as digits change. Fix: `font-variant-numeric: tabular-nums`.
+6. Numbers that jump sideways as digits change. Fix: `font-variant-numeric: tabular-nums`.
 7. A saturated full-screen background. Fix: neutral surface; colour on the one action.
 
 ## Before and after
 
-**Result screen.** Before: full-screen confetti, "YOU WON!!!" in 48 px caps, a pulsing share button, three badges. After: the card turns to "Good call +$6" at the size of the card's number, one 600 ms flourish, and a quiet share button.
+**Completion screen.** Before: full-screen confetti, "YOU DID IT!!!" in 48 px caps, a pulsing share button, three badges. After: the card turns to "Goal reached" at the size of the card's number, one 600 ms flourish, and a quiet share button.
 
 **Dashboard.** Before: six KPI tiles, each a different bright colour with an icon and an arrow. After: neutral tiles; only the one metric that moved past its alert line carries the accent.
 
-**Notification.** Before: "Hurry! Your call ends soon!!" After: "Your Benfica call ends at 22:00."
+**Notification.** Before: "Hurry! Your offer ends soon!!" After: "Your offer ends at 22:00."
 
 ## The misreading
 

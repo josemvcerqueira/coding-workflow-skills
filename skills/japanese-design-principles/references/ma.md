@@ -19,7 +19,7 @@ Time has Ma too: the pause before a loader appears, the seconds an Undo stays op
 | Motion | Durations from a short set; one thing moves at a time inside a group. |
 | States | Empty and loading states keep the populated layout's spacing, so nothing jumps. |
 | Data | Numbers in a row get room to be read one at a time. |
-| Interaction | Clear space around targets; a visible pause before money commits. |
+| Interaction | Clear space around targets; a visible pause before a consequential action commits. |
 
 ## Tests
 
@@ -29,13 +29,13 @@ Time has Ma too: the pause before a loader appears, the seconds an Undo stays op
 
 **MA-3 Gutters and reading measure.** PASS when side gutters are at least 16 px at phone width and 24 px at desktop width, reading text runs 45 to 75 characters per line at desktop, and body line height is 1.4 to 1.6 *(defaults)*. Evidence: measured values.
 
-**MA-4 Clear field around the primary action.** PASS when no unrelated element sits within 24 px of the primary action *(default)*. Two halves of one decision (Down and Up, Cancel and Save) may sit 8 to 16 px apart, so they read as a pair. Evidence: the nearest unrelated element and its distance.
+**MA-4 Clear field around the primary action.** PASS when no unrelated element sits within 24 px of the primary action *(default)*. Two halves of one decision (Yes and No, Cancel and Save) may sit 8 to 16 px apart, so they read as a pair. Evidence: the nearest unrelated element and its distance.
 
-**MA-5 The job stays in view.** PASS when, at 390 x 844, the screen's main content and its primary action are fully visible without scrolling. Evidence: phone screenshot.
+**MA-5 The job stays in view.** PASS when, at the smallest supported viewport (390 x 844 for a phone *(default)*), the screen's main content and its primary action are fully visible without scrolling. Evidence: screenshot at that size.
 
 **MA-6 Space separates first.** PASS when every divider line and every bordered box sits where space alone cannot separate (a long list of same-shape rows, a table). Evidence: each divider or box with the reason space fails there, or "none".
 
-**MA-7 Motion durations.** PASS when every UI transition takes 150, 200 or 300 ms *(default set)*, and any longer duration is a named window with a job (the 3 s Undo ring). Evidence: durations found in code. For curves and springs, use the `animate` skill.
+**MA-7 Motion durations.** PASS when every UI transition takes 150, 200 or 300 ms *(default set)*, and any longer duration is a named window with a job (a 3 s Undo countdown). Evidence: durations found in code. For curves and springs, use the `animate` skill.
 
 **MA-8 Waiting has shape.** PASS when a loading indicator appears only after 300 ms of waiting, a loading state holds the populated layout's size (no layout shift), and a transient message stays at least 4 s or until dismissed. Evidence: timings in code and the loading screenshot.
 
@@ -47,11 +47,11 @@ Time has Ma too: the pause before a loader appears, the seconds an Undo stays op
 4. Off-scale values (13 px, 18 px, 22 px) from eyeballing. Fix: snap to the nearest scale step.
 5. The primary action crowded by secondary links. Fix: move secondary links away or behind the element they belong to.
 6. A spinner that flashes for 80 ms on every fast load. Fix: wait 300 ms before showing it.
-7. A huge hero that pushes the action below the fold. Fix: cut the hero height until the job fits at 390 x 844.
+7. A huge hero that pushes the action below the fold. Fix: cut the hero height until the job fits at the smallest supported viewport.
 
 ## Before and after
 
-**Trade card.** Before: price, change, chart, volume and two buttons stacked with 12 px between all of them, divider lines between each. After: photo, then the question and one number grouped at 8 px, a 32 px gap, then the two buttons 12 px apart, 24 px clear of anything else. Same content minus the chart; the eye now lands on the buttons.
+**Product card.** Before: image, title, price, rating, stock note and two buttons stacked with 12 px between all of them, divider lines between each. After: image, then title and price grouped at 8 px, a 32 px gap, then the two buttons 12 px apart, 24 px clear of anything else. Same content minus the stock note; the eye now lands on the buttons.
 
 **Settings page.** Before: 14 rows, each in its own bordered box, 16 px apart. After: three groups of rows with 8 px inside and 32 px between, one group heading each, no boxes. The page looks shorter though it holds the same rows.
 

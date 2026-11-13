@@ -23,7 +23,7 @@ See the [workflow cohesion audit](docs/audits/2026-09-06-workflow-cohesion.md) f
 | [backend-architecture](skills/backend-architecture/SKILL.md) | Evaluate backend design, data, caching, latency, and scaling tradeoffs. |
 | [human-readable-code](skills/human-readable-code/SKILL.md) | Improve spacing, names, workflow structure, and persistence boundaries for human readers. |
 | [typescript-house-style](skills/typescript-house-style/SKILL.md) | Write consistent TypeScript with Prettier, ESLint, Drizzle, Remeda, and ts-pattern. |
-| [japanese-design-principles](skills/japanese-design-principles/SKILL.md) | Score every screen against Ma, Kanso, Wabi-Sabi, Taru o Shiru, and Shibui; decide what earns its place in a UI. |
+| [japanese-design-principles](skills/japanese-design-principles/SKILL.md) | Generic, product-agnostic standard: score any screen against Ma, Kanso, Wabi-Sabi, Taru o Shiru, and Shibui; decide what earns its place in a UI. Points to per-surface and consequential-action references and defers to the project's own design system. |
 
 ## Install
 
