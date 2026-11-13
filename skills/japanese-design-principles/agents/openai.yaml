@@ -1,0 +1,6 @@
+interface:
+  display_name: "Japanese Design Principles"
+  short_description: "Score every screen 5/5 on five Japanese design principles"
+  default_prompt: "Use $japanese-design-principles to build or review this screen and decide what earns its place."
+policy:
+  allow_implicit_invocation: true

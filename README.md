@@ -23,6 +23,7 @@ See the [workflow cohesion audit](docs/audits/2026-09-06-workflow-cohesion.md) f
 | [backend-architecture](skills/backend-architecture/SKILL.md) | Evaluate backend design, data, caching, latency, and scaling tradeoffs. |
 | [human-readable-code](skills/human-readable-code/SKILL.md) | Improve spacing, names, workflow structure, and persistence boundaries for human readers. |
 | [typescript-house-style](skills/typescript-house-style/SKILL.md) | Write consistent TypeScript with Prettier, ESLint, Drizzle, Remeda, and ts-pattern. |
+| [japanese-design-principles](skills/japanese-design-principles/SKILL.md) | Score every screen against Ma, Kanso, Wabi-Sabi, Taru o Shiru, and Shibui; decide what earns its place in a UI. |
 
 ## Install
 
@@ -39,11 +40,13 @@ npx skills add . --skill setup-workflow coordinate-work implement-ticket tdd sys
 npx skills add . --skill setup-project-context setup-workflow -a codex -a claude-code
 # Independent readability and TypeScript conventions:
 npx skills add . --skill human-readable-code typescript-house-style -a codex -a claude-code
+# Independent UI design review:
+npx skills add . --skill japanese-design-principles -a codex -a claude-code
 ```
 
 The stage skills require setup-workflow's shared file contract; install it alongside individually selected stages too. implement-ticket also requires tdd. coordinate-work, implement-ticket, review-ticket, and verify-feature use systematic-debugging conditionally for unexplained failures. review-ticket and verify-feature require spec-to-tickets. Backend specifications require backend-architecture. Companion reads do not install missing skills automatically. make-it-clear, tdd, systematic-debugging, and backend-architecture can also be used independently within their scope.
 
-human-readable-code and typescript-house-style are independent coding standards and require no workflow companions. Use `$human-readable-code` for general readability or `$typescript-house-style` for the preferred TypeScript stack and composition conventions. Both also support automatic discovery. Installing the skills does not install their preferred project libraries.
+human-readable-code, typescript-house-style, and japanese-design-principles are independent standards and require no workflow companions. Use `$human-readable-code` for general readability or `$typescript-house-style` for the preferred TypeScript stack and composition conventions. Both also support automatic discovery. Installing the skills does not install their preferred project libraries.
 
 The optional dashboard is a separate application, not part of any skill installation:
 
@@ -141,7 +144,7 @@ See the [workspace contract](skills/setup-workflow/references/workspace.md) and 
 
 ## Invocation and format
 
-All user-facing workflow stage skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Their Codex policy sets `allow_implicit_invocation: false`, and their Claude metadata sets `disable-model-invocation: true`. `systematic-debugging` supports model invocation so an active implementation, review, verification, or coordination stage can load it when an unexplained failure matches its trigger. The independent `human-readable-code` and `typescript-house-style` standards also support model invocation. Invocation never expands the current task's authority.
+All user-facing workflow stage skills are explicit-only. Codex uses `$skill-name`; Claude Code uses `/skill-name`. Their Codex policy sets `allow_implicit_invocation: false`, and their Claude metadata sets `disable-model-invocation: true`. `systematic-debugging` supports model invocation so an active implementation, review, verification, or coordination stage can load it when an unexplained failure matches its trigger. The independent `human-readable-code`, `typescript-house-style`, and `japanese-design-principles` standards also support model invocation. Invocation never expands the current task's authority.
 
 The focused [systematic-debugging behavior evaluation](evals/systematic-debugging/README.md) defines an ambiguous reviewer failure and a direct static-finding control. These model-based scenarios are separate from the deterministic test suite and make no pass claim until run with fresh agents.
 
