@@ -23,7 +23,7 @@ Taru o Shiru asks how **many** things the screen holds: actions, choices, words,
 
 ## Tests
 
-**TS-1 One primary action.** PASS when each screen state has exactly one element styled as primary. Two halves of one equal decision (Down and Up, No and Yes) styled at the same weight count as one primary decision. Evidence: the primary element(s) per state.
+**TS-1 One primary action.** PASS when each screen state has exactly one element styled as primary. Two halves of one equal decision (Yes and No, Cancel and Save) styled at the same weight count as one primary decision. Evidence: the primary element(s) per state.
 
 **TS-2 Each fact once.** PASS when no fact appears twice on the screen (a price in the header and on the card, a title repeated as heading and label). Encodings the floors require together (arrow plus colour plus word) count as one. Evidence: the facts listed, with any repeats.
 
@@ -43,20 +43,20 @@ Taru o Shiru asks how **many** things the screen holds: actions, choices, words,
 
 1. Paragraphs of explanation on working screens. Fix: one line; the rest behind "Why?" on the element, or gone.
 2. Several filled buttons competing. Fix: one primary; the others become text buttons or move into the element they act on.
-3. Every number the API returns (open, high, low, volume, market cap). Fix: keep the one number the decision uses.
+3. Every number the API returns (views, likes, shares, ratio, rank, trend). Fix: keep the one number the decision uses.
 4. Settings for things the system can decide. Fix: pick the default; offer the change only where real users need different values.
 5. The same fact in two places. Fix: keep it where the decision is made.
 6. Two ways to do the same thing. Fix: keep the one closest to the content.
-7. Cutting the cost of an action to save space. Fix: restore it; TS-8 and the money floor outrank the word budget.
+7. Cutting the cost of an action to save space. Fix: restore it; TS-8 and floor 5 outrank the word budget.
 
 ## Before and after
 
-**Trade card.** Before: price, change, 24 h high, low, volume, a chart, entry, exit and leverage fields, three buttons. After: one number (the price or the chance), when it ends, and two buttons; the system sets entry, exit and size and states the limits in the Undo window before money moves.
+**Checkout card.** Before: price, tax breakdown, shipping options, promo field, gift-wrap toggle, a delivery-time estimate, three buttons. After: one number (the total), when it arrives, and one button; the system picks the default shipping and states the charge in the Undo window before money moves.
 
-**Feed header.** Before: "Trending Markets Today: discover what the community is predicting right now" above a feed. After: no header; the feed is the page.
+**Feed header.** Before: "Trending Today: discover what everyone is reading right now" above a feed. After: no header; the feed is the page.
 
 **Onboarding.** Before: twelve questions on one form. After: four questions as single-tap cards, two of them skippable, each with a preset answer.
 
 ## The misreading
 
-Taru o Shiru is not minimalism for its own sake and not starvation. "Enough" is measured against the user's next decision: cutting the worst case from a money action, or the label that makes an icon readable, fails TS-8. It also does not mean "keep everything and hide it in menus": detail that no user decision needs is cut, not buried.
+Taru o Shiru is not minimalism for its own sake and not starvation. "Enough" is measured against the user's next decision: cutting the worst case from a consequential action, or the label that makes an icon readable, fails TS-8. It also does not mean "keep everything and hide it in menus": detail that no user decision needs is cut, not buried.

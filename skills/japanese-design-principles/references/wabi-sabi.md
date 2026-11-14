@@ -4,7 +4,7 @@ Wabi-Sabi grew up around the Japanese tea ceremony: beauty in what is plain, wor
 
 ## The idea for a screen
 
-A Wabi-Sabi screen tells the truth about its data, its time and its failures. Real names are long or short, prices are old after a minute, calls are missed, images fail to load. The screen shows these as they are, calmly, at the same weight as good news, and it never stages a perfect world: no fake counts, no fake urgency, no demo data hiding the hard cases.
+A Wabi-Sabi screen tells the truth about its data, its time and its failures. Real names are long or short, data is old after a minute, payments fail, images fail to load. The screen shows these as they are, calmly, at the same weight as good news, and it never stages a perfect world: no fake counts, no fake urgency, no demo data hiding the hard cases.
 
 Impermanence on a screen means time is visible: things have an age and an end.
 
@@ -15,19 +15,19 @@ Impermanence on a screen means time is visible: things have an age and an end.
 | Layout | Content keeps its natural shape; the layout follows real content, not an ideal grid. |
 | Type | Real text at real length, wrapped, not cut to keep tiles even. |
 | Colour | Bad news in its semantic colour at the same strength as good news. |
-| Copy | Plain truth: "Missed", "Lost $5", "Prices are 2 minutes old". |
+| Copy | Plain truth: "Failed", "Lost $5", "Data is 2 minutes old". |
 | Motion | Change shown as it happens; no motion that suggests progress that is not happening. |
 | States | Empty, loading, error and stale are designed screens, not leftovers. |
 | Data | Real numbers, honest rounding, visible age. |
-| Interaction | What happened is always findable: a missed call, a failed payment, an expired code. |
+| Interaction | What happened is always findable: a failed payment, a missed delivery, an expired code. |
 
 ## Tests
 
 **WS-1 Scored with real data in every state.** PASS when the screen is scored with realistic data in each state it can reach: populated, empty, loading, error, and a worst case (longest real name, a loss, zero, a huge number). Each state is rendered or, before code exists, specified. Evidence: the states and the data used. For the worst-case set, use the `break-ui` skill.
 
-**WS-2 Bad news at equal weight.** PASS when losses, misses, errors and negative numbers use the same size, weight and position as their good counterparts, carry a visible minus sign ("−$5") or a plain word ("Missed"), and are never greyed out, shrunk or moved lower. Evidence: a good and a bad row side by side.
+**WS-2 Bad news at equal weight.** PASS when losses, misses, errors and negative numbers use the same size, weight and position as their good counterparts, carry a visible minus sign ("−$5") or a plain word ("Failed"), and are never greyed out, shrunk or moved lower. Evidence: a good and a bad row side by side.
 
-**WS-3 Time is visible.** PASS when time-bound content shows its age or its end ("2h ago", "Ends Fri"), and data older than its freshness window shows an "as of" time or a stale mark. Freshness windows *(defaults)*: live prices 30 s, other data 5 min. Evidence: each time-bound item and its label.
+**WS-3 Time is visible.** PASS when time-bound content shows its age or its end ("2h ago", "Ends Fri"), and data older than its freshness window shows an "as of" time or a stale mark. Freshness windows *(defaults)*: live or fast-changing data 30 s, other data 5 min. Evidence: each time-bound item and its label.
 
 **WS-4 Honest errors.** PASS when every error state says in at most 2 plain sentences what happened and what to do next; no "Oops", no bare "Something went wrong", no blame on the user; and no spinner runs past 10 s without words. Evidence: each error string and the long-wait behaviour.
 
@@ -42,8 +42,8 @@ Impermanence on a screen means time is visible: things have an age and an end.
 ## Common failures, ranked
 
 1. Reviewed only with demo data that flatters the design. Fix: render the worst case and every state (WS-1).
-2. Losses in small grey text while wins are big and green. Fix: same size and place; red with a minus sign.
-3. A live price with no age, frozen when the feed drops. Fix: show "as of 14:02" past the freshness window.
+2. Losses in small grey text while gains are big and green. Fix: same size and place; red with a minus sign.
+3. Live data with no age, frozen when the feed drops. Fix: show "as of 14:02" past the freshness window.
 4. "Oops! Something went wrong." Fix: "Payment failed: your card was declined. Try another card."
 5. Fake scarcity or fake activity ("12 people are looking at this"). Fix: delete it, or show the true number.
 6. Broken image icons. Fix: a neutral tile or an initial.
@@ -51,9 +51,9 @@ Impermanence on a screen means time is visible: things have an age and an end.
 
 ## Before and after
 
-**Portfolio list.** Before: winning calls in large green type at the top; losing calls collapsed under "Show more" in grey. After: every call in one list by time, "✓ Good call +$6" and "✕ Missed −$5" in the same size, each in its semantic colour.
+**Transaction list.** Before: refunds and credits in large green type at the top; failed charges collapsed under "Show more" in grey. After: every transaction in one list by time, "✓ Refunded +$6" and "✕ Failed −$5" in the same size, each in its semantic colour.
 
-**Feed card when the price feed stalls.** Before: the last price keeps showing as if live. After: the price keeps its size and gains "as of 14:02", and the buttons say "Waiting for a fresh price" until the feed returns.
+**Live card when the data feed stalls.** Before: the last value keeps showing as if live. After: the value keeps its size and gains "as of 14:02", and the action says "Waiting for fresh data" until the feed returns.
 
 **Profile with no photo.** Before: a broken image and an empty grey box. After: a coloured circle with the person's initial, the same size as a photo.
 

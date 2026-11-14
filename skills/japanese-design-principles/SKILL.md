@@ -1,11 +1,11 @@
 ---
 name: japanese-design-principles
-description: Japanese design principles (Ma, Kanso, Wabi-Sabi, Taru o Shiru, Shibui), every screen scored 5/5. Use when building a screen, component or flow; reviewing or scoring a UI; adding or removing an element; writing UI copy; or answering "should we add X?"
+description: Japanese design principles (Ma, Kanso, Wabi-Sabi, Taru o Shiru, Shibui), every screen scored 5/5. Use when building a screen, component or flow on any platform; reviewing or scoring a UI; adding or removing an element; writing UI copy; or answering "should we add X?"
 ---
 
 # Japanese design principles
 
-Every element on a screen must earn its place. This skill decides what earns it. Craft, motion and edge-case data belong to sibling skills, named at the end.
+Every element on a screen must earn its place. This skill decides what earns it, for any product on any platform. Product-specific facts (brand, tokens, domain rules) come from the project, not from this skill; the second-to-last section says where. Craft, motion and edge-case data belong to sibling skills, named at the end.
 
 The five principles, used as leading words in every file here:
 
@@ -24,7 +24,7 @@ A screen passes when all five principles PASS in the same scoring round: 5/5.
 - A principle PASSES only when every one of its tests PASSES with cited evidence.
 - One FAIL fails the principle. One failed principle fails the screen.
 - No partial credit, no averaging, no rounding up. A test without evidence is a FAIL.
-- A test whose subject is absent (no motion, no money action) PASSES with the evidence "none present", after a search that proves it.
+- A test whose subject is absent (no motion, no destructive action) PASSES with the evidence "none present", after a search that proves it.
 - A **screen** is one view in every state it can reach: populated with realistic data, empty, loading, error, and worst case. Score screens one at a time.
 
 ## Floors
@@ -32,14 +32,14 @@ A screen passes when all five principles PASS in the same scoring round: 5/5.
 Floors sit under all five principles. No principle may trade them away, and a floor breach fails the screen on its own.
 
 1. **Legibility and contrast:** body text at least 16 px, no text under 12 px; contrast at least 4.5:1 for text, 3:1 for large text (24 px, or 19 px bold) and for control edges and icons.
-2. **Tap targets:** at least 44 x 44 px, with at least 8 px between neighbouring targets.
+2. **Target size:** touch targets at least 44 x 44 px, pointer-only targets at least 24 x 24 px, with at least 8 px between neighbouring touch targets.
 3. **Keyboard and screen reader:** every control is reachable and works by keyboard, shows a visible focus ring, and has an accessible name that says what it does.
 4. **Reduced motion:** under `prefers-reduced-motion`, movement is replaced by a fade or an instant change, and no information lives only in motion.
-5. **Money-moving actions:** before money moves, one plain sentence states the amount, the direction and the worst case; then either an Undo window (a visible countdown) or an explicit confirm.
+5. **Consequential actions:** only where an action is costly or hard to reverse (money moves, data is deleted, a message or post goes out). Before it happens, one plain sentence states what it does and the worst case; then either an Undo window (a visible countdown) or an explicit confirm. Details and the sentence pattern: [consequential-actions.md](references/consequential-actions.md).
 
 ## Modes
 
-- **Build:** write the screen's one job in one sentence ("let a person call Up or Down on one event in one tap"). Start from an empty screen holding only that job's content and its primary action. Every further element enters only through step 2. Then run steps 3 to 5 on what you built.
+- **Build:** write the screen's one job in one sentence ("let a person pick a delivery slot in one tap"). Start from an empty screen holding only that job's content and its primary action. Every further element enters only through step 2. Then run steps 3 to 5 on what you built.
 - **Review:** run steps 1 to 5 on the existing screen.
 - **"Should we add X?":** run step 2 on X first: name its job, and name the element that already does that job or that X could replace. Answer yes only when the screen still scores 5/5 with X, and say what X replaces.
 - **UI copy:** strings are elements. Run all five steps; every reference has a copy layer.
@@ -70,8 +70,8 @@ Fix in this order: remove, then merge, then restyle, and add last. Every additio
 
 ### 5. Verify on the rendered screen
 
-When the UI can render, take screenshots at phone width (390 x 844) and, when the UI ships on desktop, at 1280 x 800, with the agent-browser skill, in every state. Score from what the screenshots show; the code only explains why. When nothing can render yet (a spec or a sketch), say so on the scorecard.
-**Done when** the scorecard cites at least one observation from the rendered screen at each width, or states that no render exists.
+When the UI can render, take screenshots at the narrowest and widest viewports the product supports, in every state. Defaults *(default)*: 390 x 844 for phone, 1280 x 800 for desktop; use only the ones the product ships on. Score from what the screenshots show; the code only explains why. When nothing can render yet (a spec or a sketch), say so on the scorecard.
+**Done when** the scorecard cites at least one observation from the rendered screen at each viewport, or states that no render exists.
 
 ### Stuck loop
 
@@ -82,24 +82,46 @@ After 3 fix rounds with a FAIL that only a product or taste decision can clear, 
 One scorecard per screen. Keep the full test log from step 3 beside it; the scorecard shows only the deciding line.
 
 ```
-Screen: Home feed card · states: populated, empty, error, worst case · rendered 390 / 1280
+Screen: Order summary · states: populated, empty, error, worst case · rendered 390 / 1280
 | Principle     | Result | Deciding evidence                                        |
 | Ma            | PASS   | gaps 8 / 24 / 48 on scale; buttons clear by 32 px (MA-4) |
-| Kanso         | FAIL   | KA-3: gradient on card header, no state carried          |
-| Wabi-Sabi     | PASS   | loss row same size as win row (WS-2), screenshot 390     |
+| Kanso         | FAIL   | KA-3: gradient on summary header, no state carried       |
+| Wabi-Sabi     | PASS   | failed-payment row same size as paid row (WS-2)          |
 | Taru o Shiru  | PASS   | 34 words of explanatory copy (TS-3)                      |
 | Shibui        | PASS   | one accent, 6% saturated area (SH-2)                     |
 Floors: all met · Result: FAIL (4/5)
-Cut: "Trending now" label (heading repeated the tab) · Merged: price + change into one line
+Cut: "Popular right now" label (repeated the tab title) · Merged: price + discount into one line
 ```
 
-## Who does what
+## Applying it to a specific kind of screen
 
-- **Sonnet** does the mechanical work: the inventory, the screenshots, and collecting the measurements each test asks for (spacing values, word counts, colours, contrast ratios).
-- **Opus** builds and fixes the UI. Opus also runs the scoring audit as a fresh subagent that receives only the screenshots, the code paths and this skill, never the builder's reasoning: an agent that built a screen flatters it.
-- **Fable** only reviews contested audit findings or a whole new product flow.
-- The agent that fixes is never the agent that signs off. Sign-off is a 5/5 scorecard from a fresh auditor.
+The tests are the same everywhere; what changes is which ones bite hardest and what "enough" means. Read the entry that matches the work, in addition to the five references:
+
+| Work | Read |
+| --- | --- |
+| Phone, tablet or desktop layout; touch vs pointer; narrow and wide viewports | [surfaces.md](references/surfaces.md) |
+| Forms, onboarding, settings, checkout: anything that asks the user for input | [surfaces.md](references/surfaces.md) |
+| Dashboards, tables, feeds, any screen full of numbers or lists | [surfaces.md](references/surfaces.md) |
+| Empty, loading, error and offline states | [surfaces.md](references/surfaces.md) |
+| Payments, deletes, sends, publishes, anything costly or hard to undo | [consequential-actions.md](references/consequential-actions.md) |
+| Two principles or a floor disagree | [tensions.md](references/tensions.md) |
+
+## Project specifics
+
+This skill is the generic standard. Where the project has its own facts, the project wins:
+
+- **Design system or tokens** (spacing scale, type scale, colours, radii, durations): use those values in place of the *(default)* numbers, and say so in the evidence ("project scale: 4, 8, 16, 24").
+- **Brand and voice:** the project's brand colour is the one accent (SH-1); its voice guide sets the tone for copy tests, within KA-6 and SH-4.
+- **Domain rules:** what counts as consequential, which data goes stale and how fast, which numbers a user decides on. Take them from the project's context and spec files, never from assumption.
+- **Platform conventions:** a platform pattern (a tab bar's icon plus label, a native sheet) passes where a test says so; otherwise follow the test.
+
+When none of these exist, use the defaults and note on the scorecard that no project overrides were found. Never copy a project's specifics back into this skill.
+
+## Separating build from audit
+
+- Whoever builds or fixes a screen does not sign it off. Sign-off is a 5/5 scorecard from a fresh auditor that receives only the screenshots, the code paths and this skill, never the builder's reasoning: an agent that built a screen flatters it.
+- Mechanical work (inventory, screenshots, collecting measurements such as spacing values, word counts, colours and contrast ratios) can go to a cheaper or faster agent; judgement calls on contested findings go to a stronger one.
 
 ## Sibling skills
 
-This skill decides what stays. For how it is made, use: `emil-design-eng` for polish and component craft; `animate` and `apple-design` for motion; `break-ui` for worst-case data (WS-1); `mobile-native` for phone platform fixes; `agent-browser` for screenshots.
+This skill decides what stays. For how it is made, use these when they are installed: `emil-design-eng` for polish and component craft; `animate` and `apple-design` for motion; `break-ui` for worst-case data (WS-1); `mobile-native` for phone platform fixes; `agent-browser` for screenshots. When one is missing, do that part by hand and note it.
